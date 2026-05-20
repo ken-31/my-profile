@@ -30,7 +30,6 @@ const ProfilePage: React.FC = () => {
     // 状態管理（変更なし）
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isDarkMode, setIsDarkMode] = useState(false);
-    const instagramUrl = "https://www.instagram.com/xlekerol44/";
 
     // --- ライト/ダークモードに応じた色の切り替え設定（変更なし） ---
     const theme = {
