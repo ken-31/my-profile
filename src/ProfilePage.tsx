@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 
-// --- スクロール時にフェードインさせるための専用コンポーネント（変更なし） ---
+// --- スクロール時に上下どちらからでもフェードインさせるための専用コンポーネント ---
 const FadeInSection: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const domRef = useRef<HTMLDivElement>(null);
     const [isVisible, setVisible] = useState(false);
@@ -8,11 +8,14 @@ const FadeInSection: React.FC<{ children: React.ReactNode }> = ({ children }) =>
     useEffect(() => {
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    setVisible(true);
-                }
+                // 画面に入ったら表示(true)、画面から出たら非表示(false)に切り替える
+                setVisible(entry.isIntersecting);
             });
+        }, {
+            // 要素が10%画面に入ったらアニメーションを発火
+            threshold: 0.1
         });
+
         if (domRef.current) observer.observe(domRef.current);
         return () => {
             if (domRef.current) observer.unobserve(domRef.current);
@@ -27,11 +30,10 @@ const FadeInSection: React.FC<{ children: React.ReactNode }> = ({ children }) =>
 };
 
 const ProfilePage: React.FC = () => {
-    // 状態管理（変更なし）
+
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isDarkMode, setIsDarkMode] = useState(false);
 
-    // --- ライト/ダークモードに応じた色の切り替え設定（変更なし） ---
     const theme = {
         bg: isDarkMode ? 'bg-black' : 'bg-white',
         text: isDarkMode ? 'text-white' : 'text-black',
@@ -44,10 +46,10 @@ const ProfilePage: React.FC = () => {
         cardBg: isDarkMode ? 'bg-gray-900/50' : 'bg-gray-100/50',
     };
 
-    // メニュー開閉（変更なし）
+    // メニュー開閉
     const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
-    // スムーズスクロール処理（変更なし）
+    // スムーズスクロール処理
     const handleScrollTo = (e: React.MouseEvent, targetId: string) => {
         e.preventDefault();
         setIsMenuOpen(false);
@@ -61,41 +63,40 @@ const ProfilePage: React.FC = () => {
         }
     };
 
-    // ★音楽データ：ここに imgUrl を追加する（前回と同じ）
+    // ★音楽データ
     const musicData = [
-        { 
-            title: 'かみつきたい', 
-            format: '4th Album 燦々', 
-            date: '2019.09.05', 
-            imgUrl: '/images/kaneko.jpg', // ← これで画像が表示されるようになります！
-            linkUrl: 'https://music.apple.com/jp/album/%E3%81%8B%E3%81%BF%E3%81%A4%E3%81%8D%E3%81%9F%E3%81%84/1476048308?i=1476048310' // ← Apple MusicのURL
+        {
+            title: 'かみつきたい',
+            format: '4th Album 燦々',
+            date: '2019.09.05',
+            imgUrl: '/images/kaneko.jpg',
+            linkUrl: 'https://music.apple.com/jp/album/%E3%81%8B%E3%81%BF%E3%81%A4%E3%81%8D%E3%81%9F%E3%81%84/1476048308?i=1476048310'
         },
-        { 
-            title: 'strawberry fields forever', 
-            format: 'single', 
-            date: '1967.02.17', 
+        {
+            title: 'strawberry fields forever',
+            format: 'single',
+            date: '1967.02.17',
             imgUrl: '/images/beatles.jpg',
-            linkUrl: 'https://music.apple.com/jp/album/%E3%82%B9%E3%83%88%E3%83%AD%E3%83%99%E3%83%AA%E3%83%BC-%E3%83%95%E3%82%A3%E3%83%BC%E3%83%AB%E3%82%BA-%E3%83%95%E3%82%A9%E3%83%BC%E3%82%A8%E3%83%90%E3%83%BC-2009-digital-remaster/1441163490?i=1441163771' // 他の曲でリンクがなければとりあえず '#' でOKです
+            linkUrl: 'https://music.apple.com/jp/album/%E3%82%B9%E3%83%88%E3%83%AD%E3%83%99%E3%83%AA%E3%83%BC-%E3%83%95%E3%82%A3%E3%83%BC%E3%83%AB%E3%82%BA-%E3%83%95%E3%82%A9%E3%83%BC%E3%82%A8%E3%83%90%E3%83%BC-2009-digital-remaster/1441163490?i=1441163771'
         },
-        { 
-            title: 'Laugh away', 
-            format: '3rd Album I LOVED YESTERDAY', 
-            date: '2008.04.09', 
+        {
+            title: 'Laugh away',
+            format: '3rd Album I LOVED YESTERDAY',
+            date: '2008.04.09',
             imgUrl: '/images/yui.jpg',
             linkUrl: 'https://music.apple.com/jp/album/laugh-away/1537445609?i=1537445614'
         },
-
     ];
 
-    // ★カルーセル用の画像のパスに変更（前回と同じ）
-   const carouselItems = [
+    // ★カルーセル用の画像のパス
+    const carouselItems = [
         '/images/ralph lauren.png',
-        '/images/arcteryx.jpg', // ← ミス①： `'` を1つ消して修正
+        '/images/arcteryx.jpg',
         '/images/levis.jpg',
         '/images/carhartt.jpg',
         '/images/nana.jpg'
     ];
-    // ← ミス②：不要な `}` を削除
+
     return (
         <div className={`relative min-h-screen ${theme.bg} ${theme.text} font-sans flex flex-col items-center overflow-x-hidden transition-colors duration-500`}>
 
@@ -109,24 +110,25 @@ const ProfilePage: React.FC = () => {
                 }
             `}</style>
 
-            {/* 背景Z（変更なし） */}
+            {/* 背景Z */}
             <div className={`fixed inset-0 z-0 flex justify-center items-center ${isDarkMode ? 'opacity-10' : 'opacity-5'} pointer-events-none select-none transition-opacity duration-500`}>
                 <svg viewBox="0 0 200 400" className={`w-full h-full max-w-4xl ${theme.stroke} fill-transparent transition-colors duration-500`} preserveAspectRatio="none">
                     <path d="M160,40 Q60,100 80,200 T140,360" strokeWidth="20" strokeLinecap="round" />
                 </svg>
             </div>
 
-            {/* オーバーレイメニュー（変更なし） */}
+            {/* オーバーレイメニュー */}
             <div className={`fixed inset-0 z-40 ${isDarkMode ? 'bg-black/95' : 'bg-white/95'} backdrop-blur-sm flex flex-col items-center justify-center transition-all duration-500 ease-in-out ${isMenuOpen ? 'opacity-100 pointer-events-auto visible' : 'opacity-0 pointer-events-none invisible'}`}>
                 <nav className="flex flex-col gap-10 text-2xl md:text-4xl font-bold tracking-[0.2em] text-center">
                     <a href="#" onClick={(e) => handleScrollTo(e, 'top')} className="hover:text-gray-400 hover:scale-110 transition-all duration-300">PROFILE</a>
                     <a href="#" onClick={(e) => handleScrollTo(e, 'music')} className="hover:text-gray-400 hover:scale-110 transition-all duration-300">FAVORITE MUSIC</a>
                     <a href="#" onClick={(e) => handleScrollTo(e, 'likes')} className="hover:text-gray-400 hover:scale-110 transition-all duration-300">LIKES</a>
+                    <a href="#" onClick={(e) => handleScrollTo(e, 'cafes')} className="hover:text-gray-400 hover:scale-110 transition-all duration-300">RECOMMEND CAFE</a>
                     <a href={"https://www.instagram.com/xlekerol44/"} target="_blank" rel="noopener noreferrer" className="hover:text-gray-400 hover:scale-110 transition-all duration-300">INSTAGRAM</a>
                 </nav>
             </div>
 
-            {/* ヘッダー部分（変更なし） */}
+            {/* ヘッダー部分 */}
             <div className="fixed top-0 w-full flex justify-end items-center p-4 md:p-8 z-50 pointer-events-none">
                 <div className="flex items-center gap-6 pointer-events-auto">
                     <button onClick={() => setIsDarkMode(!isDarkMode)} className="hover:scale-110 transition-transform duration-300">
@@ -148,7 +150,7 @@ const ProfilePage: React.FC = () => {
             <div className="w-full flex flex-col items-center p-4 md:p-12 gap-y-24 md:gap-y-32 max-w-[1200px] mt-12 md:mt-0 pb-24">
 
                 {/* =========================================
-                    SECTION 1 : PROFILE（変更なし）
+                    SECTION 1 : PROFILE
                 ========================================= */}
                 <FadeInSection>
                     <div id="top" className="relative z-10 w-full flex flex-col md:flex-row md:justify-between gap-10 md:gap-20 min-h-[90vh]">
@@ -226,14 +228,11 @@ const ProfilePage: React.FC = () => {
                 </FadeInSection>
 
                 {/* =========================================
-                    SECTION 2 : FAVORITE MUSIC（画面中央に配置するように修正）
+                    SECTION 2 : FAVORITE MUSIC
                 ========================================= */}
                 <FadeInSection>
                     <div id="music" className="relative z-10 w-full min-h-[90vh]">
-                        {/* 修正：全体を画面中央寄せにするため、Flexコンテナに変更 */}
                         <div className="w-full flex flex-col items-center">
-
-                            {/* タイトルと説明文も中央寄せ */}
                             <div className="w-full max-w-4xl relative pt-4 md:pt-10 mb-12 text-center flex flex-col items-center">
                                 <div className={`absolute top-0 left-0 w-4 h-4 border-t-[2px] border-l-[2px] ${theme.border} md:top-4 transition-colors duration-500`}></div>
                                 <h2 className="text-3xl md:text-5xl font-bold tracking-widest mb-2 mt-4 inline-block relative">
@@ -243,27 +242,27 @@ const ProfilePage: React.FC = () => {
                                 <p className="text-xs md:text-sm leading-loose w-[95%] md:w-[85%] font-medium">よく聴く楽曲やアルバム。その時々の気分や影響を受けた音楽たち。</p>
                             </div>
 
-                            {/* === ★ 音楽グリッド（ホバーで1回転アニメーション ＆ 推奨画像サイズの画像） === */}
-                            {/* 修正：グリッド全体が中央に来るよう、max-w を設定し place-items-center を追加 */}
+                            {/* ★ 音楽グリッド（aタグに変更してリンク化） */}
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-10 mb-16 px-2 [perspective:1000px] place-items-center w-full max-w-5xl">
                                 {musicData.map((music, idx) => (
-                                    <div key={idx} className={`border ${theme.borderDotted} rounded-lg p-4 flex flex-col items-center gap-4 ${theme.cardBg} backdrop-blur-sm cursor-pointer transition-transform duration-1000 hover:[transform:rotateY(360deg)] w-full`}>
-                                        {/* 推奨サイズの正方形画像をはめ込みます */}
-                                        {/* object-cover により、画像が完璧な正方形でなくても枠いっぱいに綺麗に収まります */}
+                                    <a
+                                        key={idx}
+                                        href={music.linkUrl}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className={`block border ${theme.borderDotted} rounded-lg p-4 flex flex-col items-center gap-4 ${theme.cardBg} backdrop-blur-sm cursor-pointer transition-transform duration-1000 hover:[transform:rotateY(360deg)] w-full`}
+                                    >
                                         <img src={music.imgUrl} alt={music.title} className="w-full h-full aspect-square object-cover rounded shadow-md" />
-
                                         <div className="text-center w-full">
                                             <h3 className="text-base font-bold tracking-widest mb-1 truncate">{music.title}</h3>
                                             <p className={`text-[10px] font-semibold tracking-wider ${theme.textMuted} uppercase`}>{music.format}</p>
                                             <p className="text-[10px] font-medium tracking-wider text-gray-400">{music.date}</p>
                                         </div>
-                                    </div>
+                                    </a>
                                 ))}
                             </div>
 
-                            {/* PLAYLISTを見る ボタンも中央寄せ */}
                             <div className="flex justify-center mb-20 relative">
-                                {/* ボタンの横のカギカッコ */}
                                 <div className={`absolute -top-px -left-px w-3 h-3 border-t-[2px] border-l-[2px] ${theme.border}`}></div>
                                 <div className={`absolute -bottom-px -right-px w-3 h-3 border-b-[2px] border-r-[2px] ${theme.border}`}></div>
                                 <button className={`border ${theme.border} text-sm font-bold tracking-widest py-3 px-8 transition-colors duration-300 hover:${theme.bgInvert} hover:${theme.textInvert}`}>
@@ -275,7 +274,7 @@ const ProfilePage: React.FC = () => {
                 </FadeInSection>
 
                 {/* =========================================
-                    SECTION 3 : LIKES (好きなものカルーセル)（変更なし）
+                    SECTION 3 : LIKES 
                 ========================================= */}
                 <FadeInSection>
                     <div id="likes" className="relative z-10 w-full flex flex-col items-center pt-4 md:pt-10 mb-24">
@@ -285,7 +284,6 @@ const ProfilePage: React.FC = () => {
                             <p className={`text-xs md:text-sm tracking-widest uppercase font-semibold ${theme.textMuted}`}>好きなブランド</p>
                         </div>
 
-                        {/* 自動スクロールカルーセル */}
                         <div className="w-full overflow-hidden flex whitespace-nowrap pointer-events-none mt-4">
                             <div className="animate-marquee flex min-w-full shrink-0 items-center justify-around gap-6 pr-6">
                                 {carouselItems.map((item, idx) => (
@@ -301,6 +299,83 @@ const ProfilePage: React.FC = () => {
                                     </div>
                                 ))}
                             </div>
+                        </div>
+                    </div>
+                </FadeInSection>
+
+                {/* =========================================
+                    SECTION 4 : RECOMMEND CAFES
+                ========================================= */}
+                <FadeInSection>
+                    <div id="cafes" className="relative z-10 w-full flex flex-col items-center pt-4 md:pt-10 mb-24">
+                        <div className="w-full pl-2 mb-12 text-left relative max-w-4xl">
+                            <div className={`absolute top-0 left-0 w-4 h-4 border-t-[2px] border-l-[2px] ${theme.border}`}></div>
+                            <h2 className="text-3xl md:text-5xl font-bold tracking-widest mb-2 mt-6">CAFES</h2>
+                            <p className={`text-xs md:text-sm tracking-widest uppercase font-semibold ${theme.textMuted}`}>都内のおすすめ喫茶店3選</p>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full max-w-5xl">
+
+                            {/* --- 喫茶店 1 --- */}
+                            <div className={`flex flex-col border ${theme.borderDotted} rounded-lg overflow-hidden ${theme.cardBg} backdrop-blur-sm transition-transform duration-500 hover:-translate-y-2 shadow-sm`}>
+                                <div className="w-full h-64 md:h-56">
+                                    <iframe
+                                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3239.9024492375092!2d139.64589309113296!3d35.70401809712562!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6018f27d22cf60d5%3A0xb4bfa1e3b414cdd!2z44Ki44O844Or5bqnIOiqreabuOmkqA!5e0!3m2!1sja!2sjp!4v1779380309643!5m2!1sja!2sjp"
+                                        width="100%"
+                                        height="100%"
+                                        style={{ border: 0 }}
+                                        allowFullScreen={false}
+                                        loading="lazy"
+                                        referrerPolicy="no-referrer-when-downgrade"
+                                    ></iframe>
+                                </div>
+                                <div className="p-5 flex flex-col gap-1">
+                                    <h3 className="font-bold tracking-widest text-lg truncate">アール座 読書館</h3>
+                                    <p className={`text-[10px] md:text-xs font-semibold ${theme.textMuted}`}>杉並区高円寺南3丁目</p>
+                                    <p className="text-xs mt-3 font-medium leading-relaxed">店内での私語は禁止。静かな空間で読書をしながら美味しい紅茶を楽しむことが出来る。</p>
+                                </div>
+                            </div>
+
+                            {/* --- 喫茶店 2 (しのカフェ) --- */}
+                            <div className={`flex flex-col border ${theme.borderDotted} rounded-lg overflow-hidden ${theme.cardBg} backdrop-blur-sm transition-transform duration-500 hover:-translate-y-2 shadow-sm`}>
+                                <div className="w-full h-64 md:h-56">
+                                    <iframe
+                                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3239.593466793662!2d139.65653207578896!3d35.71162047257746!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6018f28498ae62db%3A0x8bb3f92ecff3432d!2z44GX44Gu44Kr44OV44Kn!5e0!3m2!1sja!2sjp!4v1779379754408!5m2!1sja!2sjp"
+                                        width="100%"
+                                        height="100%"
+                                        style={{ border: 0 }}
+                                        allowFullScreen={false}
+                                        loading="lazy"
+                                        referrerPolicy="no-referrer-when-downgrade"
+                                    ></iframe>
+                                </div>
+                                <div className="p-5 flex flex-col gap-1">
+                                    <h3 className="font-bold tracking-widest text-lg truncate">しのカフェ</h3>
+                                    <p className={`text-[10px] md:text-xs font-semibold ${theme.textMuted}`}>中野区野方1丁目</p>
+                                    <p className="text-xs mt-3 font-medium leading-relaxed">中野区の静かな住宅街の中にある、3匹の猫と触れ合うことが出来る古民家カフェ!</p>
+                                </div>
+                            </div>
+
+                            {/* --- 喫茶店 3 --- */}
+                            <div className={`flex flex-col border ${theme.borderDotted} rounded-lg overflow-hidden ${theme.cardBg} backdrop-blur-sm transition-transform duration-500 hover:-translate-y-2 shadow-sm`}>
+                                <div className="w-full h-64 md:h-56">
+                                    <iframe
+                                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3240.448119252419!2d139.70395969999998!3d35.69058869999999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x60188cdb01e97e91%3A0x1faa7dea16f28f27!2z5ZCN5puy4oCi54-I55CyIOaWsOWuv-OCieOCk-OBtuOCiw!5e0!3m2!1sja!2sjp!4v1779379424485!5m2!1sja!2sjp"
+                                        width="100%"
+                                        height="100%"
+                                        style={{ border: 0 }}
+                                        allowFullScreen={false}
+                                        loading="lazy"
+                                        referrerPolicy="no-referrer-when-downgrade"
+                                    ></iframe>
+                                </div>
+                                <div className="p-5 flex flex-col gap-1">
+                                    <h3 className="font-bold tracking-widest text-lg truncate">名曲・珈琲 新宿ランブル</h3>
+                                    <p className={`text-[10px] md:text-xs font-semibold ${theme.textMuted}`}>新宿区新宿3丁目</p>
+                                    <p className="text-xs mt-3 font-medium leading-relaxed">豪華な座席とシャンデリアのある歴史のあるカフェ。コーヒー、デザート、ランチを提供。</p>
+                                </div>
+                            </div>
+
                         </div>
                     </div>
                 </FadeInSection>
