@@ -108,6 +108,16 @@ const ProfilePage: React.FC = () => {
                 .animate-marquee {
                     animation: marquee 20s linear infinite;
                 }
+
+                /* ▼▼▼ ここから追加：スクロールバーを非表示にする設定 ▼▼▼ */
+                ::-webkit-scrollbar {
+                    display: none;
+                }
+                * {
+                    -ms-overflow-style: none; /* IE, Edge 対応 */
+                    scrollbar-width: none;    /* Firefox 対応 */
+                }
+                /* ▲▲▲ ここまで追加 ▲▲▲ */
             `}</style>
 
             {/* 背景Z */}
