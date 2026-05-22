@@ -100,7 +100,7 @@ const ProfilePage: React.FC = () => {
     return (
         <div className={`relative min-h-screen ${theme.bg} ${theme.text} font-sans flex flex-col items-center overflow-x-hidden transition-colors duration-500`}>
 
-            <style>{`
+<style>{`
                 @keyframes marquee {
                     0% { transform: translateX(0); }
                     100% { transform: translateX(-100%); }
