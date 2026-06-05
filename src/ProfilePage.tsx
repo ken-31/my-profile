@@ -10,7 +10,7 @@ const FadeInSection: React.FC<{ children: React.ReactNode }> = ({ children }) =>
                 if (entry.isIntersecting) setVisible(true);
             });
         }, { threshold: 0.1 });
-        
+
         if (domRef.current) observer.observe(domRef.current);
         return () => {
             if (domRef.current) observer.unobserve(domRef.current);
@@ -56,8 +56,8 @@ const ProfilePage: React.FC = () => {
     ];
 
     const playlistData = [
-        { 
-            no: '01', t: '洋楽ロック', 
+        {
+            no: '01', t: '洋楽ロック',
             songs: [
                 { title: 'All You Need Is Love', artist: 'The Beatles', album: 'The Beatles 1967-1970', time: '3:49' },
                 { title: "Don't be cruel", artist: 'Elvis Presley', album: 'The essential Elvis Presley', time: '2:05' },
@@ -66,10 +66,10 @@ const ProfilePage: React.FC = () => {
                 { title: 'ZOMBIFIED', artist: 'Falling In Reverse', album: 'ZOMBIFIED - Single', time: '3:39' },
                 { title: 'Crazy Train', artist: 'Ozzy Osbourne', album: 'Blizzard of Ozz', time: '4:53' },
                 { title: 'CARRY ON', artist: 'ANGRA', album: 'ANGLES CRY', time: '5:04' },
-            ] 
+            ]
         },
-        { 
-            no: '02', t: '散歩知てるときに聞いている曲', 
+        {
+            no: '02', t: '散歩知てるときに聞いている曲',
             songs: [
                 { title: '光の方へ', artist: 'カネコアヤノ', album: '燦々', time: '3:50' },
                 { title: '明るい未来', artist: 'never young beach', album: 'fam fam', time: '3:54' },
@@ -77,31 +77,31 @@ const ProfilePage: React.FC = () => {
                 { title: 'Baby Powder', artist: 'Janevieve', album: 'Division', time: '2:57' },
                 { title: '君が泣くなら', artist: 'Lamp', album: '東京ユウトピア通信', time: '4:57' },
                 { title: 'Viva Nao Mais', artist: 'Freddie Dredd', album: 'Viva Nao Mais - Single', time: '2:04' },
-            ] 
+            ]
         },
-        { 
-            no: '03', t: '街の中でゆっくり聴く曲', 
+        {
+            no: '03', t: '街の中でゆっくり聴く曲',
             songs: [
                 { title: '丸の内サディスティック', artist: '椎名林檎', album: '無罪モラトリアム', time: '3:55' },
                 { title: 'NIGHT TOWN', artist: 'フレンズ', album: 'コンコロール', time: '4:10' },
                 { title: 'Plastic Love', artist: '竹内まりや', album: 'VARIETY', time: '4:51' },
                 { title: '琥珀色の街、上海蟹の朝', artist: 'くるり', album: '琥珀色の街、上海蟹の朝', time: '5:05' },
-            ] 
+            ]
         },
-        { 
-            no: '04', t: '心が疲れたときに寄り添う曲', 
+        {
+            no: '04', t: '心が疲れたときに寄り添う曲',
             songs: [
                 { title: '笑えれば', artist: 'ウルフルズ', album: 'ええねん', time: '4:45' },
                 { title: 'やさしさで溢れるように', artist: 'JUJU', album: 'What\'s Love?', time: '4:52' },
                 { title: '手紙 〜拝啓 十五の君へ〜', artist: 'アンジェラ・アキ', album: 'ANSWER', time: '5:12' },
-            ] 
+            ]
         },
     ];
 
     const cafeData = [
         {
             no: '01', n: 'アール座 読書館', a: '杉並区高円寺南3丁目', tag: ['#読書', '#静寂'],
-            mapSrc: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3239.9024492375092!2d139.64589309113296!3d35.70401809712562!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6018f27d22cf60d5%3A0xb4bfa1e3b414cdd!2z44Ki44O844Or5bqnIOiqreabuOmkqA!5e0!3m2!1sja!2sjp!4v1779380309643!5m2!1sja!2sjp' 
+            mapSrc: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3239.9024492375092!2d139.64589309113296!3d35.70401809712562!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6018f27d22cf60d5%3A0xb4bfa1e3b414cdd!2z44Ki44O844Or5bqnIOiqreabuOmkqA!5e0!3m2!1sja!2sjp!4v1779380309643!5m2!1sja!2sjp'
         },
         {
             no: '02', n: 'しのカフェ', a: '中野区野方1丁目', tag: ['#古民家', '#猫'],
@@ -160,7 +160,7 @@ const ProfilePage: React.FC = () => {
     useEffect(() => {
         if (musicAnimState === 'playing' || cafeAnimState === 'playing' || selectedPlaylistIndex !== null) {
             document.body.style.overflow = 'hidden';
-            document.body.style.touchAction = 'none'; 
+            document.body.style.touchAction = 'none';
         } else {
             document.body.style.overflow = '';
             document.body.style.touchAction = '';
@@ -173,25 +173,12 @@ const ProfilePage: React.FC = () => {
 
     const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
-    const handleScrollTo = (e: React.MouseEvent, targetId: string) => {
-        e.preventDefault();
-        setIsMenuOpen(false);
-        if (targetId === 'top') {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        } else if (targetId === 'music' || targetId === 'cafes') {
-            const element = document.getElementById(`${targetId}-title`);
-            if (element) element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        } else {
-            const element = document.getElementById(targetId);
-            if (element) element.scrollIntoView({ behavior: 'smooth' });
-        }
-    };
 
     const carouselBaseItems = [
         '/images/ralph lauren.png', '/images/arcteryx.jpg', '/images/levis.jpg', '/images/carhartt.jpg', '/images/nana.jpg'
     ];
     const carouselItems = [...carouselBaseItems, ...carouselBaseItems];
-    
+
     return (
         <div className={`relative min-h-screen ${theme.bg} ${theme.text} font-sans flex flex-col items-center overflow-x-hidden transition-colors duration-500`}>
 
@@ -236,38 +223,38 @@ const ProfilePage: React.FC = () => {
 
             {selectedPlaylistIndex !== null && (
                 <div className={`fixed inset-0 z-[100] flex items-center justify-center p-4 backdrop-blur-md transition-all duration-300 ${isDarkMode ? 'bg-black/80' : 'bg-stone-500/50'}`}>
-                    
+
                     <div className="absolute inset-0 cursor-pointer" onClick={() => setSelectedPlaylistIndex(null)}></div>
 
-                    <button 
+                    <button
                         className="absolute top-6 right-6 md:top-10 md:right-10 z-50 text-white hover:scale-110 transition-transform bg-black/40 rounded-full p-2 backdrop-blur"
                         onClick={() => setSelectedPlaylistIndex(null)}
                     >
-                        <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M6 18L18 6M6 6l12 12"/></svg>
+                        <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M6 18L18 6M6 6l12 12" /></svg>
                     </button>
 
                     <div className="relative w-full h-[85vh] flex items-center justify-center overflow-hidden pointer-events-none">
-                        
-                        <button 
+
+                        <button
                             className={`absolute left-2 md:left-8 z-50 w-12 h-12 rounded-full border border-zinc-500 flex items-center justify-center pointer-events-auto transition-transform ${isDarkMode ? 'bg-zinc-800 text-white' : 'bg-white text-black'} ${selectedPlaylistIndex === 0 ? 'opacity-30 cursor-not-allowed' : 'hover:scale-110 cursor-pointer'}`}
                             onClick={(e) => { e.stopPropagation(); setSelectedPlaylistIndex(prev => Math.max(0, (prev || 0) - 1)); }}
                             disabled={selectedPlaylistIndex === 0}
                         >
-                            <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M15 19l-7-7 7-7"/></svg>
+                            <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M15 19l-7-7 7-7" /></svg>
                         </button>
 
-                        <button 
+                        <button
                             className={`absolute right-2 md:right-8 z-50 w-12 h-12 rounded-full border border-zinc-500 flex items-center justify-center pointer-events-auto transition-transform ${isDarkMode ? 'bg-zinc-800 text-white' : 'bg-white text-black'} ${selectedPlaylistIndex === playlistData.length - 1 ? 'opacity-30 cursor-not-allowed' : 'hover:scale-110 cursor-pointer'}`}
                             onClick={(e) => { e.stopPropagation(); setSelectedPlaylistIndex(prev => Math.min(playlistData.length - 1, (prev || 0) + 1)); }}
                             disabled={selectedPlaylistIndex === playlistData.length - 1}
                         >
-                            <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 5l7 7-7 7"/></svg>
+                            <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 5l7 7-7 7" /></svg>
                         </button>
 
                         {playlistData.map((pl, idx) => {
                             const offset = idx - selectedPlaylistIndex;
                             const isCenter = offset === 0;
-                            
+
                             let transformClass = "";
                             let zIndex = 0;
                             if (offset === 0) { transformClass = "translate-x-0 scale-100 opacity-100"; zIndex = 30; }
@@ -277,20 +264,20 @@ const ProfilePage: React.FC = () => {
                             else if (offset < -1) { transformClass = "-translate-x-[150%] scale-75 opacity-0"; zIndex = 10; }
 
                             return (
-                                <div 
-                                    key={idx} 
+                                <div
+                                    key={idx}
                                     className={`absolute w-[88%] md:w-[75%] lg:w-[60%] max-w-5xl h-full flex flex-col transition-all duration-700 ease-[cubic-bezier(0.25,1,0.5,1)] rounded-2xl border ${isDarkMode ? 'bg-zinc-900 border-zinc-700 text-white' : 'bg-white border-zinc-300 text-black'} shadow-2xl pointer-events-auto ${transformClass}`}
                                     style={{ zIndex }}
-                                    onClick={(e) => { 
-                                        e.stopPropagation(); 
-                                        if(!isCenter) setSelectedPlaylistIndex(idx); 
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        if (!isCenter) setSelectedPlaylistIndex(idx);
                                     }}
                                 >
                                     <div className="p-8 text-center shrink-0 border-b border-current/10">
                                         <h2 className="text-2xl md:text-4xl font-bold tracking-widest">{pl.t}</h2>
                                         <p className="text-xs mt-2 opacity-50 uppercase tracking-widest">{pl.songs.length} songs</p>
                                     </div>
-                                    
+
                                     <div className="flex-1 overflow-y-auto px-4 md:px-8 pb-8 pt-4 custom-scrollbar">
                                         <div className="w-full text-left text-xs md:text-sm">
                                             <div className="grid grid-cols-[3rem_1fr_auto] md:grid-cols-[3rem_2fr_2fr_2fr_auto] gap-4 mb-4 font-bold pb-2 opacity-50 border-b border-current/20">
@@ -303,14 +290,14 @@ const ProfilePage: React.FC = () => {
                                             {pl.songs.map((song, sIdx) => (
                                                 <div key={sIdx} className="grid grid-cols-[3rem_1fr_auto] md:grid-cols-[3rem_2fr_2fr_2fr_auto] items-center gap-4 py-4 border-b border-current/10 hover:bg-current/5 transition-colors cursor-default">
                                                     <div className="w-10 h-10 border border-current/20 rounded-md bg-zinc-500/10 flex items-center justify-center shrink-0 mx-auto">
-                                                        <svg className="w-5 h-5 opacity-40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+                                                        <svg className="w-5 h-5 opacity-40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M9 18V5l12-2v13" /><circle cx="6" cy="18" r="3" /><circle cx="18" cy="16" r="3" /></svg>
                                                     </div>
                                                     <div className="font-bold truncate text-base">{song.title}</div>
                                                     <div className="hidden md:block opacity-80 truncate">{song.artist}</div>
                                                     <div className="hidden md:block opacity-80 truncate">{song.album}</div>
                                                     <div className="flex items-center gap-6 justify-end">
                                                         <span className="opacity-60 font-mono text-sm">{song.time}</span>
-                                                        <svg className="w-5 h-5 opacity-40 hover:opacity-100 cursor-pointer transition-opacity" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+                                                        <svg className="w-5 h-5 opacity-40 hover:opacity-100 cursor-pointer transition-opacity" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="1" /><circle cx="19" cy="12" r="1" /><circle cx="5" cy="12" r="1" /></svg>
                                                     </div>
                                                 </div>
                                             ))}
@@ -319,12 +306,12 @@ const ProfilePage: React.FC = () => {
                                 </div>
                             );
                         })}
-                        
+
                         <div className="absolute bottom-[-2rem] flex gap-3 z-50 pointer-events-auto">
                             {playlistData.map((_, idx) => (
-                                <div 
-                                    key={idx} 
-                                    className={`w-2.5 h-2.5 rounded-full transition-all duration-300 cursor-pointer border border-white/50 ${idx === selectedPlaylistIndex ? 'bg-white scale-125' : 'bg-transparent hover:bg-white/50'}`} 
+                                <div
+                                    key={idx}
+                                    className={`w-2.5 h-2.5 rounded-full transition-all duration-300 cursor-pointer border border-white/50 ${idx === selectedPlaylistIndex ? 'bg-white scale-125' : 'bg-transparent hover:bg-white/50'}`}
                                     onClick={(e) => { e.stopPropagation(); setSelectedPlaylistIndex(idx); }}
                                 ></div>
                             ))}
@@ -458,14 +445,14 @@ const ProfilePage: React.FC = () => {
                     <div className={`w-full transition-all duration-1000 transform ${musicAnimState === 'done' ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none'}`}>
                         <p className={`text-sm tracking-widest uppercase mb-2 ${theme.textMuted}`}>About Me</p>
                         <h2 className="text-5xl md:text-7xl font-bold mb-12 tracking-tight">My Favorite Music.</h2>
-                        
+
                         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
                             <div className="lg:col-span-8">
                                 <div className={`flex justify-between items-end mb-6 border-b ${theme.borderDotted} pb-4`}>
                                     <h3 className="text-xl font-bold uppercase italic">Top {musicData.length} Albums</h3>
                                     <span className="text-xs font-bold opacity-50 cursor-pointer hover:opacity-100">VIEW ALL →</span>
                                 </div>
-                                
+
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16 [perspective:1000px]">
                                     {musicData.map((alb) => (
                                         <a key={alb.id} href={alb.linkUrl} target="_blank" rel="noopener noreferrer" className="group block cursor-pointer">
@@ -499,7 +486,7 @@ const ProfilePage: React.FC = () => {
                                         「言葉は、言葉にならない気持ちを形にしてくれるもの。」
                                     </p>
                                     <p className={`text-sm mt-6 leading-loose opacity-80 ${theme.textMuted}`}>
-                                        言葉にできない、つらい時。そっと寄り添ってくれる音楽が大好きです。<br/>
+                                        言葉にできない、つらい時。そっと寄り添ってくれる音楽が大好きです。<br />
                                         ジャンルにこだわらず、その瞬間の心に響く、大切な音たちをここに集めています。
                                     </p>
                                 </div>
@@ -513,8 +500,8 @@ const ProfilePage: React.FC = () => {
                                     </div>
                                     <div className="space-y-6">
                                         {playlistData.map((pl, idx) => (
-                                            <div 
-                                                key={pl.no} 
+                                            <div
+                                                key={pl.no}
                                                 className={`flex items-center gap-4 group cursor-pointer border-b ${theme.borderDotted} pb-4`}
                                                 onClick={() => setSelectedPlaylistIndex(idx)}
                                             >
@@ -524,7 +511,7 @@ const ProfilePage: React.FC = () => {
                                                     <p className="text-[10px] opacity-50">{pl.songs.length} songs</p>
                                                 </div>
                                                 <div className="w-8 h-8 rounded-full border border-current flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                                    <svg className="w-3 h-3 fill-current" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                                                    <svg className="w-3 h-3 fill-current" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
                                                 </div>
                                             </div>
                                         ))}
@@ -614,9 +601,9 @@ const ProfilePage: React.FC = () => {
                             <h2 className="text-5xl md:text-7xl font-bold mb-10 tracking-tighter italic">My Favorite Cafes.</h2>
                             <div className={`flex gap-12 items-center border-y ${theme.borderDotted} py-8`}>
                                 {[
-                                    {label:'Visit Count', val: cafeData.length, unit:'places'},
-                                    {label:'Areas', val: uniqueAreasCount, unit:'cities'},
-                                    {label:'Saved', val: cafeData.length, unit:'favorites'}
+                                    { label: 'Visit Count', val: cafeData.length, unit: 'places' },
+                                    { label: 'Areas', val: uniqueAreasCount, unit: 'cities' },
+                                    { label: 'Saved', val: cafeData.length, unit: 'favorites' }
                                 ].map(s => (
                                     <div key={s.label}>
                                         <p className={`text-[10px] uppercase font-bold opacity-50 mb-1 ${theme.textMuted}`}>{s.label}</p>
@@ -658,19 +645,19 @@ const ProfilePage: React.FC = () => {
                                     <h3 className="text-xl font-bold uppercase italic">Featured Cafes</h3>
                                     <span className="text-xs font-bold opacity-50 cursor-pointer hover:opacity-100">VIEW ALL →</span>
                                 </div>
-                                
+
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                     {cafeData.map(cf => (
                                         <div key={cf.no} className={`group cursor-pointer border-b ${theme.borderDotted} pb-8`}>
                                             <div className={`aspect-[16/9] mb-6 overflow-hidden relative border ${theme.borderDotted} rounded-lg bg-zinc-500/10`}>
                                                 <span className={`absolute top-4 left-4 text-3xl font-black opacity-30 italic ${theme.textMuted} z-20 pointer-events-none`}>{cf.no}</span>
-                                                <iframe 
-                                                    src={cf.mapSrc} 
-                                                    width="100%" 
-                                                    height="100%" 
-                                                    style={{ border: 0 }} 
-                                                    allowFullScreen={false} 
-                                                    loading="lazy" 
+                                                <iframe
+                                                    src={cf.mapSrc}
+                                                    width="100%"
+                                                    height="100%"
+                                                    style={{ border: 0 }}
+                                                    allowFullScreen={false}
+                                                    loading="lazy"
                                                     referrerPolicy="no-referrer-when-downgrade"
                                                     className="relative z-10"
                                                 ></iframe>
@@ -691,7 +678,7 @@ const ProfilePage: React.FC = () => {
                                 <div className="space-y-8 pt-10">
                                     <h3 className={`text-xl font-bold uppercase italic border-b ${theme.borderDotted} pb-4`}>Latest Articles</h3>
                                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                        {[1,2,3].map(i => (
+                                        {[1, 2, 3].map(i => (
                                             <div key={i} className="space-y-4 group cursor-pointer">
                                                 <div className={`aspect-video ${theme.cardBg} overflow-hidden rounded`}>
                                                     <div className="w-full h-full bg-zinc-500/20 group-hover:scale-110 transition-transform duration-700"></div>
