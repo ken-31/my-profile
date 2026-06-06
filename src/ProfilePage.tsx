@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react';
-
 const FadeInSection: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const domRef = useRef<HTMLDivElement>(null);
     const [isVisible, setVisible] = useState(false);
