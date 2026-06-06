@@ -620,7 +620,7 @@ const ProfilePage: React.FC = () => {
                                     </svg>
                                 </div>
                             </div>
-                            <div className="absolute bottom-[20%] w-[150px] h-[150px] rounded-full anim-steam-whiteout" style={{ '--flash-color': theme.flashBg } as React.CSSProperties}></div>
+                            <div className="absolute bottom-[20%] w-[150px] h-[150px] rounded-full anim-steam-whiteout"style={{ '--flash-color': theme.flashBg } as any}></div>
                         </div>
                     )}
 
