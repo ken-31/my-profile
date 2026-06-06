@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { Analytics } from "@vercel/analytics/react";
 
 // --- 通常セクション用の簡易フェードイン ---
 const FadeInSection: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -6,6 +7,7 @@ const FadeInSection: React.FC<{ children: React.ReactNode }> = ({ children }) =>
     const [isVisible, setVisible] = useState(false);
 
     useEffect(() => {
+        const currentRef = domRef.current;
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
@@ -14,9 +16,9 @@ const FadeInSection: React.FC<{ children: React.ReactNode }> = ({ children }) =>
             });
         }, { threshold: 0.1 });
         
-        if (domRef.current) observer.observe(domRef.current);
+        if (currentRef) observer.observe(currentRef);
         return () => {
-            if (domRef.current) observer.unobserve(domRef.current);
+            if (currentRef) observer.unobserve(currentRef);
         };
     }, []);
 
@@ -162,7 +164,7 @@ const ProfilePage: React.FC = () => {
         };
     }, []);
 
-    // スクロールロック機能（カルーセルを開いている間もスクロールを停止）
+    // スクロールロック機能
     useEffect(() => {
         if (musicAnimState === 'playing' || cafeAnimState === 'playing' || selectedPlaylistIndex !== null) {
             document.body.style.overflow = 'hidden';
@@ -179,8 +181,8 @@ const ProfilePage: React.FC = () => {
 
     const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
-    // 💡 初期コードの安全な型指定（React.MouseEvent）に戻しました
-    const handleScrollTo = (e: React.MouseEvent, targetId: string) => {
+    // Vercel審査用：anyを排除し、ボタンに対応した型を指定
+    const handleScrollTo = (e: React.MouseEvent<HTMLButtonElement>, targetId: string) => {
         e.preventDefault();
         setIsMenuOpen(false);
         if (targetId === 'top') {
@@ -292,6 +294,9 @@ const ProfilePage: React.FC = () => {
                                     key={pl.no} 
                                     role="button"
                                     tabIndex={isCenter ? -1 : 0}
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter' && !isCenter) setSelectedPlaylistIndex(idx);
+                                    }}
                                     className={`absolute w-[88%] md:w-[75%] lg:w-[60%] max-w-5xl h-full flex flex-col transition-all duration-700 ease-[cubic-bezier(0.25,1,0.5,1)] rounded-2xl border ${isDarkMode ? 'bg-zinc-900 border-zinc-700 text-white' : 'bg-white border-zinc-300 text-black'} shadow-2xl pointer-events-auto ${transformClass} outline-none`}
                                     style={{ zIndex }}
                                     onClick={(e) => { 
@@ -376,9 +381,6 @@ const ProfilePage: React.FC = () => {
 
             <div className="w-full flex flex-col items-center p-4 md:p-12 gap-y-24 md:gap-y-32 max-w-[1200px] mt-12 md:mt-0 pb-24">
 
-                {/* =========================================
-                    SECTION 1 : PROFILE
-                ========================================= */}
                 <FadeInSection>
                     <div id="top" className="relative z-10 w-full flex flex-col md:flex-row md:justify-between gap-10 md:gap-20 min-h-[90vh]">
                         <div className="flex flex-col w-full md:flex-1 relative pt-4 md:pt-10">
@@ -447,9 +449,6 @@ const ProfilePage: React.FC = () => {
                     </div>
                 </FadeInSection>
 
-                {/* =========================================
-                    SECTION 2 : FAVORITE MUSIC
-                ========================================= */}
                 <div id="music" className="relative w-full min-h-[90vh] flex flex-col items-center overflow-visible pt-10">
                     <div id="music-title" ref={musicRef} className="w-full h-1 scroll-mt-24 md:scroll-mt-32"></div>
 
@@ -581,9 +580,6 @@ const ProfilePage: React.FC = () => {
                     </div>
                 </div>
 
-                {/* =========================================
-                    SECTION 3 : LIKES
-                ========================================= */}
                 <FadeInSection>
                     <div id="likes" className="relative z-10 w-full flex flex-col items-center pt-4 md:pt-10 mb-24">
                         <div className="w-full pl-2 mb-12 text-left relative max-w-4xl">
@@ -611,9 +607,6 @@ const ProfilePage: React.FC = () => {
                     </div>
                 </FadeInSection>
 
-                {/* =========================================
-                    SECTION 4 : RECOMMEND CAFES
-                ========================================= */}
                 <div id="cafes" className="relative w-full flex flex-col items-center pt-10 mb-24 overflow-visible">
                     <div id="cafes-title" ref={cafesRef} className="w-full h-1 scroll-mt-24 md:scroll-mt-32"></div>
 
@@ -752,6 +745,7 @@ const ProfilePage: React.FC = () => {
                     </div>
                 </div>
 
+                <Analytics />
             </div>
         </div>
     );
