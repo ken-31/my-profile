@@ -522,11 +522,11 @@ const ProfilePage: React.FC = () => {
                                 <div className={`p-10 border ${theme.borderDotted} border-dashed`}>
                                     <p className={`text-xs uppercase mb-4 opacity-50 ${theme.textMuted}`}>My Music Philosophy</p>
                                     <p className="text-2xl md:text-3xl font-serif italic leading-relaxed">
-                                        「言葉は、言葉にならない気持ちを形にしてくれるもの。」
+                                        「描写一つごとにあった音楽を聞きたい」
                                     </p>
                                     <p className={`text-sm mt-6 leading-loose opacity-80 ${theme.textMuted}`}>
-                                        言葉にできない、つらい時。そっと寄り添ってくれる音楽が大好きです。<br/>
-                                        ジャンルにこだわらず、その瞬間の心に響く、大切な音たちをここに集めています。
+                                        情景にあった音楽を聞くのが好きです。<br/>
+                                    
                                     </p>
                                 </div>
                             </div>
