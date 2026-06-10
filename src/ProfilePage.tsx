@@ -23,7 +23,7 @@ const FadeInSection: React.FC<{ children: React.ReactNode }> = ({ children }) =>
     }, []);
 
     return (
-        <div ref={domRef} className={`w-full transition-all duration-1000 ease-out ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-16'}`}>
+        <div ref={domRef} className={`w-full transition-all duration-[1400ms] ease-[cubic-bezier(0.16,1,0.3,1)] ${isVisible ? 'opacity-100 translate-y-0 scale-100 blur-none' : 'opacity-0 translate-y-16 scale-[0.97] blur-sm'}`}>
             {children}
         </div>
     );
@@ -54,6 +54,16 @@ const ProfilePage: React.FC = () => {
         stroke: isDarkMode ? 'stroke-white' : 'stroke-black',
         cardBg: isDarkMode ? 'bg-gray-900/50' : 'bg-gray-100/50',
         flashBg: isDarkMode ? '#000000' : '#ffffff',
+        // リキッドグラス用トークン（透明感重視）
+        glass: isDarkMode
+            ? 'bg-white/[0.03] backdrop-blur-xl border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.45),inset_0_1px_0_rgba(255,255,255,0.07)]'
+            : 'bg-white/10 backdrop-blur-xl border border-white/40 shadow-[0_8px_32px_rgba(31,38,135,0.08),inset_0_1px_0_rgba(255,255,255,0.8)]',
+        glassHover: isDarkMode ? 'hover:bg-white/[0.07] hover:border-white/20' : 'hover:bg-white/20 hover:border-white/70',
+        glassPill: isDarkMode
+            ? 'bg-white/10 backdrop-blur-xl border border-white/15 shadow-[0_4px_16px_rgba(0,0,0,0.35)]'
+            : 'bg-white/15 backdrop-blur-xl border border-white/40 shadow-[0_4px_16px_rgba(31,38,135,0.08)]',
+        glassOverlay: isDarkMode ? 'bg-white/90' : 'bg-black/90',
+        glassOverlaySoft: isDarkMode ? 'bg-white/80' : 'bg-black/80',
     };
 
     const musicData = [
@@ -237,7 +247,68 @@ const ProfilePage: React.FC = () => {
 
                 @keyframes fade-out-overlay { 0% { opacity: 1; visibility: visible; } 100% { opacity: 0; visibility: hidden; } }
                 .anim-fade-out-screen { animation: fade-out-overlay 0.8s ease-in-out 3.7s both; }
+
+                /* --- リキッドグラス: 背景の浮遊オーブ --- */
+                @keyframes blob-float-a { 0%, 100% { transform: translate(0, 0) scale(1); } 33% { transform: translate(8vw, 6vh) scale(1.15); } 66% { transform: translate(-4vw, 10vh) scale(0.9); } }
+                @keyframes blob-float-b { 0%, 100% { transform: translate(0, 0) scale(1); } 50% { transform: translate(-10vw, -8vh) scale(1.2); } }
+                @keyframes blob-float-c { 0%, 100% { transform: translate(0, 0) scale(1); } 40% { transform: translate(6vw, -10vh) scale(0.85); } 70% { transform: translate(-8vw, -2vh) scale(1.1); } }
+                .anim-blob-a { animation: blob-float-a 26s ease-in-out infinite; }
+                .anim-blob-b { animation: blob-float-b 32s ease-in-out infinite; }
+                .anim-blob-c { animation: blob-float-c 38s ease-in-out infinite; }
+
+                /* --- リキッドグラス: ホバー時のシマー（光の反射）--- */
+                @keyframes shimmer-sweep { 0% { transform: translateX(-150%) skewX(-20deg); } 100% { transform: translateX(250%) skewX(-20deg); } }
+                .glass-shimmer { position: relative; overflow: hidden; }
+                .glass-shimmer::before {
+                    content: ''; position: absolute; top: 0; left: 0; width: 40%; height: 100%;
+                    background: linear-gradient(115deg, transparent 20%, rgba(255,255,255,0.35) 50%, transparent 80%);
+                    transform: translateX(-150%) skewX(-20deg); pointer-events: none; opacity: 0;
+                    transition: opacity 0.2s ease;
+                }
+                .glass-shimmer:hover::before { opacity: 1; animation: shimmer-sweep 1.1s ease forwards; }
+
+                /* --- リキッドグラス: ふわっと浮遊するカード --- */
+                @keyframes glass-float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-6px); } }
+                .glass-floating { animation: glass-float 6s ease-in-out infinite; }
+
+                /* --- 強化版: 音楽演出パーティクル拡散 --- */
+                @keyframes burst-shard { 0% { transform: translate(0,0) scale(0.2) rotate(0deg); opacity: 0; } 15% { opacity: 1; } 100% { transform: translate(var(--mx), var(--my)) scale(1) rotate(var(--mr)); opacity: 0; } }
+                .anim-burst-shard { opacity: 0; animation: burst-shard 1.6s cubic-bezier(0.2,0.8,0.2,1) 1.4s both; }
+
+                @keyframes ring-expand { 0% { transform: scale(0.3); opacity: 0.9; border-width: 6px; } 100% { transform: scale(2.6); opacity: 0; border-width: 1px; } }
+                .anim-ring-expand { animation: ring-expand 1.8s ease-out 1.3s both; }
+
+                /* --- 強化版: カフェ演出の波紋 --- */
+                @keyframes ripple-out { 0% { transform: scale(0); opacity: 0.6; } 100% { transform: scale(1); opacity: 0; } }
+                .anim-ripple { animation: ripple-out 2.4s ease-out infinite; }
+
+                @keyframes steam-wisp { 0% { transform: translateY(0) translateX(0) scale(0.6); opacity: 0; } 30% { opacity: 0.7; } 100% { transform: translateY(-180px) translateX(var(--wx, 20px)) scale(1.4); opacity: 0; } }
+                .anim-steam-wisp { animation: steam-wisp 2.6s ease-in-out infinite; }
+
+                /* --- マーキーのフェードマスク --- */
+                .marquee-mask { -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); }
+
+                /* --- LIKES: コーンフロー風カード演出 --- */
+                .coverflow-card {
+                    transform: perspective(1000px) rotateY(var(--tilt, 0deg));
+                    transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.5s ease;
+                    will-change: transform;
+                }
+                .coverflow-card:hover {
+                    transform: perspective(1000px) rotateY(0deg) translateY(-14px) scale(1.1);
+                    z-index: 30;
+                    box-shadow: 0 25px 50px -12px rgba(0,0,0,0.35);
+                }
+                @keyframes card-bob { 0%, 100% { transform: translateY(0) rotate(var(--rot, 0deg)); } 50% { transform: translateY(-14px) rotate(var(--rot, 0deg)); } }
+                .anim-card-bob { animation: card-bob 6s ease-in-out infinite; }
             `}</style>
+
+            {/* リキッドグラスの背景を演出する浮遊オーブ（白背景に透ける淡いグレー） */}
+            <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none select-none transition-opacity duration-500">
+                <div className={`anim-blob-a absolute -top-32 -left-32 w-[26rem] h-[26rem] md:w-[34rem] md:h-[34rem] rounded-full blur-[110px] transition-colors duration-500 ${isDarkMode ? 'bg-white/[0.06]' : 'bg-slate-300/50'}`}></div>
+                <div className={`anim-blob-b absolute top-1/4 -right-40 w-[28rem] h-[28rem] md:w-[38rem] md:h-[38rem] rounded-full blur-[130px] transition-colors duration-500 ${isDarkMode ? 'bg-white/[0.04]' : 'bg-zinc-200/60'}`}></div>
+                <div className={`anim-blob-c absolute bottom-0 left-1/4 w-[24rem] h-[24rem] md:w-[30rem] md:h-[30rem] rounded-full blur-[110px] transition-colors duration-500 ${isDarkMode ? 'bg-white/[0.05]' : 'bg-gray-300/40'}`}></div>
+            </div>
 
             <div className={`fixed inset-0 z-0 flex justify-center items-center ${isDarkMode ? 'opacity-10' : 'opacity-5'} pointer-events-none select-none transition-opacity duration-500`}>
                 <svg viewBox="0 0 200 400" className={`w-full h-full max-w-4xl ${theme.stroke} fill-transparent transition-colors duration-500`} preserveAspectRatio="none"><path d="M160,40 Q60,100 80,200 T140,360" strokeWidth="20" strokeLinecap="round" /></svg>
@@ -245,12 +316,12 @@ const ProfilePage: React.FC = () => {
 
             {/* モーダル部分（プレイリスト詳細） */}
             {selectedPlaylistIndex !== null && (
-                <div className={`fixed inset-0 z-[100] flex items-center justify-center p-4 backdrop-blur-md transition-all duration-300 ${isDarkMode ? 'bg-black/80' : 'bg-stone-500/50'}`}>
-                    
+                <div className={`fixed inset-0 z-[100] flex items-center justify-center p-4 backdrop-blur-2xl transition-all duration-300 ${isDarkMode ? 'bg-black/70' : 'bg-stone-400/40'}`}>
+
                     <div className="absolute inset-0 cursor-pointer" aria-hidden="true" onClick={() => setSelectedPlaylistIndex(null)}></div>
 
-                    <button 
-                        className="absolute top-6 right-6 md:top-10 md:right-10 z-50 text-white hover:scale-110 transition-transform bg-black/40 rounded-full p-2 backdrop-blur"
+                    <button
+                        className="absolute top-6 right-6 md:top-10 md:right-10 z-50 text-white hover:scale-110 active:scale-95 transition-transform bg-white/10 border border-white/20 rounded-full p-2 backdrop-blur-xl shadow-lg"
                         onClick={() => setSelectedPlaylistIndex(null)}
                         aria-label="Close modal"
                     >
@@ -259,8 +330,8 @@ const ProfilePage: React.FC = () => {
 
                     <div className="relative w-full h-[85vh] flex items-center justify-center overflow-hidden pointer-events-none">
                         
-                        <button 
-                            className={`absolute left-2 md:left-8 z-50 w-12 h-12 rounded-full border border-zinc-500 flex items-center justify-center pointer-events-auto transition-transform ${isDarkMode ? 'bg-zinc-800 text-white' : 'bg-white text-black'} ${selectedPlaylistIndex === 0 ? 'opacity-30 cursor-not-allowed' : 'hover:scale-110 cursor-pointer'}`}
+                        <button
+                            className={`absolute left-2 md:left-8 z-50 w-12 h-12 rounded-full ${theme.glassPill} flex items-center justify-center pointer-events-auto transition-all ${isDarkMode ? 'text-white' : 'text-black'} ${selectedPlaylistIndex === 0 ? 'opacity-30 cursor-not-allowed' : 'hover:scale-110 active:scale-95 cursor-pointer'}`}
                             onClick={(e) => { e.stopPropagation(); setSelectedPlaylistIndex(prev => Math.max(0, (prev ?? 0) - 1)); }}
                             disabled={selectedPlaylistIndex === 0}
                             aria-label="Previous playlist"
@@ -268,8 +339,8 @@ const ProfilePage: React.FC = () => {
                             <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M15 19l-7-7 7-7"/></svg>
                         </button>
 
-                        <button 
-                            className={`absolute right-2 md:right-8 z-50 w-12 h-12 rounded-full border border-zinc-500 flex items-center justify-center pointer-events-auto transition-transform ${isDarkMode ? 'bg-zinc-800 text-white' : 'bg-white text-black'} ${selectedPlaylistIndex === playlistData.length - 1 ? 'opacity-30 cursor-not-allowed' : 'hover:scale-110 cursor-pointer'}`}
+                        <button
+                            className={`absolute right-2 md:right-8 z-50 w-12 h-12 rounded-full ${theme.glassPill} flex items-center justify-center pointer-events-auto transition-all ${isDarkMode ? 'text-white' : 'text-black'} ${selectedPlaylistIndex === playlistData.length - 1 ? 'opacity-30 cursor-not-allowed' : 'hover:scale-110 active:scale-95 cursor-pointer'}`}
                             onClick={(e) => { e.stopPropagation(); setSelectedPlaylistIndex(prev => Math.min(playlistData.length - 1, (prev ?? 0) + 1)); }}
                             disabled={selectedPlaylistIndex === playlistData.length - 1}
                             aria-label="Next playlist"
@@ -297,7 +368,7 @@ const ProfilePage: React.FC = () => {
                                     onKeyDown={(e) => {
                                         if (e.key === 'Enter' && !isCenter) setSelectedPlaylistIndex(idx);
                                     }}
-                                    className={`absolute w-[88%] md:w-[75%] lg:w-[60%] max-w-5xl h-full flex flex-col transition-all duration-700 ease-[cubic-bezier(0.25,1,0.5,1)] rounded-2xl border ${isDarkMode ? 'bg-zinc-900 border-zinc-700 text-white' : 'bg-white border-zinc-300 text-black'} shadow-2xl pointer-events-auto ${transformClass} outline-none`}
+                                    className={`absolute w-[88%] md:w-[75%] lg:w-[60%] max-w-5xl h-full flex flex-col transition-all duration-700 ease-[cubic-bezier(0.25,1,0.5,1)] rounded-[1.75rem] backdrop-blur-2xl border ${isDarkMode ? 'bg-zinc-900/40 border-white/10 text-white' : 'bg-white/40 border-white/60 text-black'} shadow-2xl pointer-events-auto ${transformClass} outline-none`}
                                     style={{ zIndex }}
                                     onClick={(e) => { 
                                         e.stopPropagation(); 
@@ -353,24 +424,24 @@ const ProfilePage: React.FC = () => {
             )}
 
             <div className="fixed top-0 w-full flex justify-end items-center p-4 md:p-8 z-30 pointer-events-none">
-                <div className="flex items-center gap-6 pointer-events-auto">
-                    <button onClick={() => setIsDarkMode(!isDarkMode)} className="hover:scale-110 transition-transform duration-300">
+                <div className="flex items-center gap-4 pointer-events-auto">
+                    <button onClick={() => setIsDarkMode(!isDarkMode)} className={`${theme.glassPill} rounded-full p-3 hover:scale-110 active:scale-95 transition-all duration-300`}>
                         {isDarkMode ? (
-                            <svg className="w-6 h-6 fill-white" viewBox="0 0 24 24"><path d="M12 2.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM7.5 12a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM18.856 5.144a.75.75 0 00-1.06 1.06l1.591 1.59a.75.75 0 101.06-1.06l-1.59-1.59zM21.75 12a.75.75 0 01-.75.75h-2.25a.75.75 0 010-1.5H21a.75.75 0 01.75.75zM17.796 18.856a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 10-1.061 1.06l1.59 1.591zM12 18.75a.75.75 0 01.75.75V21a.75.75 0 01-1.5 0v-1.5a.75.75 0 01.75-.75zM6.204 18.856a.75.75 0 01-1.06-1.06l1.591-1.59a.75.75 0 111.06 1.06l-1.59 1.59zM2.25 12a.75.75 0 01.75-.75h2.25a.75.75 0 010 1.5H3a.75.75 0 01-.75-.75zM5.144 5.144a.75.75 0 011.06 1.06L4.613 7.795a.75.75 0 01-1.06-1.06l1.591-1.591z" /></svg>
+                            <svg className="w-5 h-5 md:w-6 md:h-6 fill-white" viewBox="0 0 24 24"><path d="M12 2.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM7.5 12a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM18.856 5.144a.75.75 0 00-1.06 1.06l1.591 1.59a.75.75 0 101.06-1.06l-1.59-1.59zM21.75 12a.75.75 0 01-.75.75h-2.25a.75.75 0 010-1.5H21a.75.75 0 01.75.75zM17.796 18.856a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 10-1.061 1.06l1.59 1.591zM12 18.75a.75.75 0 01.75.75V21a.75.75 0 01-1.5 0v-1.5a.75.75 0 01.75-.75zM6.204 18.856a.75.75 0 01-1.06-1.06l1.591-1.59a.75.75 0 111.06 1.06l-1.59 1.59zM2.25 12a.75.75 0 01.75-.75h2.25a.75.75 0 010 1.5H3a.75.75 0 01-.75-.75zM5.144 5.144a.75.75 0 011.06 1.06L4.613 7.795a.75.75 0 01-1.06-1.06l1.591-1.591z" /></svg>
                         ) : (
-                            <svg className="w-6 h-6 fill-black" viewBox="0 0 24 24"><path d="M9.528 1.718a.75.75 0 01.162.819A8.97 8.97 0 009 6a9 9 0 009 9 8.97 8.97 0 003.463-.69.75.75 0 01.981.98 10.503 10.503 0 01-9.694 6.46c-5.799 0-10.5-4.701-10.5-10.5 0-4.368 2.667-8.112 6.46-9.694a.75.75 0 01.818.162z" /></svg>
+                            <svg className="w-5 h-5 md:w-6 md:h-6 fill-black" viewBox="0 0 24 24"><path d="M9.528 1.718a.75.75 0 01.162.819A8.97 8.97 0 009 6a9 9 0 009 9 8.97 8.97 0 003.463-.69.75.75 0 01.981.98 10.503 10.503 0 01-9.694 6.46c-5.799 0-10.5-4.701-10.5-10.5 0-4.368 2.667-8.112 6.46-9.694a.75.75 0 01.818.162z" /></svg>
                         )}
                     </button>
-                    <button onClick={toggleMenu} className="space-y-1.5 flex flex-col items-end cursor-pointer group">
-                        <span className={`block h-0.5 ${theme.bgInvert} transition-all duration-300 ease-in-out ${isMenuOpen ? 'w-8 rotate-45 translate-y-2' : 'w-8 group-hover:w-6'}`}></span>
-                        <span className={`block h-0.5 ${theme.bgInvert} transition-all duration-300 ease-in-out ${isMenuOpen ? 'w-0 opacity-0' : 'w-8 group-hover:w-8'}`}></span>
-                        <span className={`block h-0.5 ${theme.bgInvert} transition-all duration-300 ease-in-out ${isMenuOpen ? 'w-8 -rotate-45 -translate-y-2' : 'w-8 group-hover:w-4'}`}></span>
+                    <button onClick={toggleMenu} className={`${theme.glassPill} rounded-full p-3 px-4 space-y-1.5 flex flex-col items-end justify-center cursor-pointer group transition-all duration-300 hover:scale-105 active:scale-95`}>
+                        <span className={`block h-0.5 ${theme.bgInvert} transition-all duration-300 ease-in-out ${isMenuOpen ? 'w-6 rotate-45 translate-y-2' : 'w-6 group-hover:w-5'}`}></span>
+                        <span className={`block h-0.5 ${theme.bgInvert} transition-all duration-300 ease-in-out ${isMenuOpen ? 'w-0 opacity-0' : 'w-6 group-hover:w-6'}`}></span>
+                        <span className={`block h-0.5 ${theme.bgInvert} transition-all duration-300 ease-in-out ${isMenuOpen ? 'w-6 -rotate-45 -translate-y-2' : 'w-6 group-hover:w-3'}`}></span>
                     </button>
                 </div>
             </div>
 
-            <div className={`fixed inset-0 z-40 ${isDarkMode ? 'bg-black/95' : 'bg-white/95'} backdrop-blur-sm flex flex-col items-center justify-center transition-all duration-500 ease-in-out ${isMenuOpen ? 'opacity-100 pointer-events-auto visible' : 'opacity-0 pointer-events-none invisible'}`}>
-                <nav className="flex flex-col gap-10 text-2xl md:text-4xl font-bold tracking-[0.2em] text-center">
+            <div className={`fixed inset-0 z-40 ${isDarkMode ? 'bg-black/40' : 'bg-white/30'} backdrop-blur-2xl flex flex-col items-center justify-center transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${isMenuOpen ? 'opacity-100 pointer-events-auto visible' : 'opacity-0 pointer-events-none invisible'}`}>
+                <nav className={`flex flex-col gap-8 md:gap-10 text-2xl md:text-4xl font-bold tracking-[0.2em] text-center ${theme.glass} rounded-[2rem] px-10 py-12 md:px-20 md:py-16 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${isMenuOpen ? 'translate-y-0 scale-100' : 'translate-y-6 scale-95'}`}>
                     <button onClick={(e) => handleScrollTo(e, 'top')} className="hover:text-gray-400 hover:scale-110 transition-all duration-300 bg-transparent border-none cursor-pointer">PROFILE</button>
                     <button onClick={(e) => handleScrollTo(e, 'music')} className="hover:text-gray-400 hover:scale-110 transition-all duration-300 bg-transparent border-none cursor-pointer">FAVORITE MUSIC</button>
                     <button onClick={(e) => handleScrollTo(e, 'likes')} className="hover:text-gray-400 hover:scale-110 transition-all duration-300 bg-transparent border-none cursor-pointer">LIKES</button>
@@ -424,7 +495,7 @@ const ProfilePage: React.FC = () => {
                                 </div>
                                 <div className="flex flex-col gap-3 items-start text-xs md:text-sm font-bold">
                                     {['# 喫茶店巡り', '# 古着屋巡り', '# 都内探索/遠出'].map((tag, idx) => (
-                                        <span key={idx} className={`${theme.bgInvert} ${theme.textInvert} px-3 py-1.5 tracking-wider cursor-pointer border border-transparent hover:${theme.bg} hover:${theme.text} hover:${theme.border} transition-all duration-300 hover:-translate-y-1 shadow-sm hover:shadow-md`}>
+                                        <span key={idx} className={`glass-shimmer ${theme.glass} ${theme.glassHover} ${theme.text} px-4 py-2 rounded-full tracking-wider cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-xl`}>
                                             {tag}
                                         </span>
                                     ))}
@@ -434,7 +505,7 @@ const ProfilePage: React.FC = () => {
 
                         <div className="flex justify-end gap-4 md:gap-8 w-full md:w-[45%] h-[500px] md:h-auto relative mt-8 md:mt-0">
                             <div className="w-[25%] md:w-24 flex flex-col items-center justify-between py-6 md:py-10 z-20">
-                                <div className={`w-16 md:w-20 h-16 md:h-20 rounded-full border ${theme.border} flex items-center justify-center shrink-0 mb-4 ${theme.bg} shadow-sm cursor-default hover:${theme.bgInvert} hover:${theme.textInvert} transition-colors duration-500 group mt-12 md:mt-0`}>
+                                <div className={`glass-floating w-16 md:w-20 h-16 md:h-20 rounded-full ${theme.glass} ${theme.glassHover} flex items-center justify-center shrink-0 mb-4 cursor-default transition-colors duration-500 group mt-12 md:mt-0`}>
                                     <p className="text-[10px] md:text-xs [writing-mode:vertical-rl] [text-orientation:upright] text-center tracking-widest leading-relaxed font-bold transition-transform duration-300 group-hover:scale-105">
                                         IT系の<br />専門学生してます！
                                     </p>
@@ -454,13 +525,20 @@ const ProfilePage: React.FC = () => {
 
                     {musicAnimState === 'playing' && (
                         <div className="fixed inset-0 z-40 overflow-hidden pointer-events-none">
-                            <div className={`absolute inset-0 ${theme.bgInvert} flex items-center justify-center anim-shatter-tl`}></div>
-                            <div className={`absolute inset-0 ${theme.bgInvert} flex items-center justify-center anim-shatter-tr`}></div>
-                            <div className={`absolute inset-0 ${theme.bgInvert} flex items-center justify-center anim-shatter-bl`}></div>
-                            <div className={`absolute inset-0 ${theme.bgInvert} flex items-center justify-center anim-shatter-br`}></div>
+                            {/* リキッドグラスのシャード（破片）が飛び散る */}
+                            <div className={`absolute inset-0 ${theme.glassOverlay} backdrop-blur-2xl flex items-center justify-center anim-shatter-tl`}></div>
+                            <div className={`absolute inset-0 ${theme.glassOverlay} backdrop-blur-2xl flex items-center justify-center anim-shatter-tr`}></div>
+                            <div className={`absolute inset-0 ${theme.glassOverlay} backdrop-blur-2xl flex items-center justify-center anim-shatter-bl`}></div>
+                            <div className={`absolute inset-0 ${theme.glassOverlay} backdrop-blur-2xl flex items-center justify-center anim-shatter-br`}></div>
+
+                            {/* 拡散するグラスリング */}
+                            <div className="absolute inset-0 flex items-center justify-center z-10">
+                                <div className="w-40 h-40 rounded-full border border-white/60 anim-ring-expand"></div>
+                                <div className="absolute w-40 h-40 rounded-full border border-white/40 anim-ring-expand" style={{ animationDelay: '1.5s' }}></div>
+                            </div>
 
                             <div className="absolute inset-0 flex flex-col items-center justify-center z-10">
-                                <div className={`${theme.textInvert} anim-drop-box mb-6`}>
+                                <div className={`${theme.textInvert} anim-drop-box mb-6 drop-shadow-[0_0_35px_rgba(255,255,255,0.35)]`}>
                                     <svg className="w-48 h-48 stroke-current fill-transparent" strokeWidth="1.2" viewBox="0 0 24 24">
                                         <rect x="2" y="6" width="20" height="14" rx="2" />
                                         <circle cx="6.5" cy="13" r="2.5" />
@@ -470,13 +548,31 @@ const ProfilePage: React.FC = () => {
                                     </svg>
                                 </div>
                                 <div className={`absolute ${theme.textInvert} font-bold`}>
-                                    <span className="absolute text-5xl anim-burst-note" style={{ '--mx': '-25vw', '--my': '-30vh', '--mr': '-45deg' } as React.CSSProperties}>♩</span>
-                                    <span className="absolute text-6xl anim-burst-note" style={{ '--mx': '30vw', '--my': '-25vh', '--mr': '60deg' } as React.CSSProperties}>♪</span>
-                                    <span className="absolute text-5xl anim-burst-note" style={{ '--mx': '-35vw', '--my': '20vh', '--mr': '-90deg' } as React.CSSProperties}>♫</span>
-                                    <span className="absolute text-7xl anim-burst-note" style={{ '--mx': '25vw', '--my': '35vh', '--mr': '120deg' } as React.CSSProperties}>♬</span>
-                                    <span className="absolute text-6xl anim-burst-note" style={{ '--mx': '0vw', '--my': '-40vh', '--mr': '15deg' } as React.CSSProperties}>♩</span>
-                                    <span className="absolute text-5xl anim-burst-note" style={{ '--mx': '-15vw', '--my': '40vh', '--mr': '-30deg' } as React.CSSProperties}>♪</span>
+                                    <span className="absolute text-5xl anim-burst-note drop-shadow-[0_0_12px_rgba(255,255,255,0.6)]" style={{ '--mx': '-25vw', '--my': '-30vh', '--mr': '-45deg' } as React.CSSProperties}>♩</span>
+                                    <span className="absolute text-6xl anim-burst-note drop-shadow-[0_0_12px_rgba(255,255,255,0.6)]" style={{ '--mx': '30vw', '--my': '-25vh', '--mr': '60deg' } as React.CSSProperties}>♪</span>
+                                    <span className="absolute text-5xl anim-burst-note drop-shadow-[0_0_12px_rgba(255,255,255,0.6)]" style={{ '--mx': '-35vw', '--my': '20vh', '--mr': '-90deg' } as React.CSSProperties}>♫</span>
+                                    <span className="absolute text-7xl anim-burst-note drop-shadow-[0_0_12px_rgba(255,255,255,0.6)]" style={{ '--mx': '25vw', '--my': '35vh', '--mr': '120deg' } as React.CSSProperties}>♬</span>
+                                    <span className="absolute text-6xl anim-burst-note drop-shadow-[0_0_12px_rgba(255,255,255,0.6)]" style={{ '--mx': '0vw', '--my': '-40vh', '--mr': '15deg' } as React.CSSProperties}>♩</span>
+                                    <span className="absolute text-5xl anim-burst-note drop-shadow-[0_0_12px_rgba(255,255,255,0.6)]" style={{ '--mx': '-15vw', '--my': '40vh', '--mr': '-30deg' } as React.CSSProperties}>♪</span>
+                                    <span className="absolute text-4xl anim-burst-note drop-shadow-[0_0_12px_rgba(255,255,255,0.6)]" style={{ '--mx': '40vw', '--my': '5vh', '--mr': '90deg' } as React.CSSProperties}>♬</span>
+                                    <span className="absolute text-4xl anim-burst-note drop-shadow-[0_0_12px_rgba(255,255,255,0.6)]" style={{ '--mx': '-42vw', '--my': '-5vh', '--mr': '-60deg' } as React.CSSProperties}>♫</span>
                                 </div>
+
+                                {/* ガラスの破片が四方に飛散する */}
+                                {[
+                                    { mx: '-18vw', my: '-22vh', mr: '-120deg', size: 'w-16 h-24' },
+                                    { mx: '20vw', my: '-18vh', mr: '95deg', size: 'w-20 h-14' },
+                                    { mx: '-22vw', my: '24vh', mr: '60deg', size: 'w-14 h-20' },
+                                    { mx: '24vw', my: '20vh', mr: '-80deg', size: 'w-24 h-16' },
+                                    { mx: '0vw', my: '-30vh', mr: '40deg', size: 'w-16 h-16' },
+                                    { mx: '0vw', my: '30vh', mr: '-40deg', size: 'w-16 h-16' },
+                                ].map((s, i) => (
+                                    <div
+                                        key={i}
+                                        className={`absolute ${s.size} rounded-xl bg-white/10 border border-white/30 backdrop-blur-md anim-burst-shard`}
+                                        style={{ '--mx': s.mx, '--my': s.my, '--mr': s.mr, animationDelay: `${1.4 + i * 0.05}s` } as React.CSSProperties}
+                                    ></div>
+                                ))}
                             </div>
                         </div>
                     )}
@@ -519,7 +615,7 @@ const ProfilePage: React.FC = () => {
                                     </div>
                                 </div>
 
-                                <div className={`p-10 border ${theme.borderDotted} border-dashed`}>
+                                <div className={`glass-shimmer ${theme.glass} rounded-[1.5rem] p-10 transition-all duration-500 hover:-translate-y-1`}>
                                     <p className={`text-xs uppercase mb-4 opacity-50 ${theme.textMuted}`}>My Music Philosophy</p>
                                     <p className="text-2xl md:text-3xl font-serif italic leading-relaxed">
                                         「描写一つごとにあった音楽を聞きたい」
@@ -532,21 +628,21 @@ const ProfilePage: React.FC = () => {
                             </div>
 
                             <div className="lg:col-span-4 space-y-8">
-                                <div className={`${theme.cardBg} p-6 h-full border ${theme.borderDotted}`}>
+                                <div className={`${theme.glass} rounded-[1.5rem] p-6 h-full transition-all duration-500 hover:-translate-y-1`}>
                                     <div className="flex justify-between items-center mb-8">
                                         <h3 className="font-black uppercase tracking-tighter">My Playlist</h3>
                                         <span className="text-[10px] opacity-50 cursor-pointer hover:opacity-100">VIEW ALL →</span>
                                     </div>
-                                    <div className="space-y-6">
+                                    <div className="space-y-2">
                                         {playlistData.map((pl, idx) => (
-                                            <div 
-                                                key={pl.no} 
+                                            <div
+                                                key={pl.no}
                                                 role="button"
                                                 tabIndex={0}
                                                 onKeyDown={(e) => {
                                                     if (e.key === 'Enter') setSelectedPlaylistIndex(idx);
                                                 }}
-                                                className={`flex items-center gap-4 group cursor-pointer border-b ${theme.borderDotted} pb-4 outline-none`}
+                                                className={`flex items-center gap-4 group cursor-pointer rounded-xl px-3 py-3 -mx-3 transition-all duration-300 outline-none ${theme.glassHover} hover:shadow-lg`}
                                                 onClick={() => setSelectedPlaylistIndex(idx)}
                                             >
                                                 <span className="text-xs font-bold opacity-30">{pl.no}</span>
@@ -561,17 +657,17 @@ const ProfilePage: React.FC = () => {
                                         ))}
                                     </div>
 
-                                    <div className={`mt-20 p-4 border ${theme.borderDotted}`}>
+                                    <div className={`mt-12 p-4 rounded-2xl ${isDarkMode ? 'bg-black/20' : 'bg-white/40'} border ${theme.borderDotted} backdrop-blur-md`}>
                                         <p className="text-[9px] uppercase font-bold mb-4 opacity-50 tracking-widest">Now Playing</p>
                                         <div className="flex gap-4 items-center">
-                                            <div className="w-16 h-16 bg-zinc-800 shrink-0 animate-pulse"></div>
+                                            <div className="w-16 h-16 rounded-lg bg-zinc-800 shrink-0 animate-pulse"></div>
                                             <div>
                                                 <p className="text-xs font-bold">かみつきたい</p>
                                                 <p className="text-[10px] opacity-60 italic">カネコアヤノ</p>
                                             </div>
                                         </div>
-                                        <div className="mt-4 w-full h-[1px] bg-zinc-500/30 relative">
-                                            <div className="absolute left-0 top-0 h-full bg-current w-1/3"></div>
+                                        <div className="mt-4 w-full h-[2px] rounded-full bg-zinc-500/30 relative overflow-hidden">
+                                            <div className={`absolute left-0 top-0 h-full ${theme.bgInvert} w-1/3 rounded-full`}></div>
                                         </div>
                                     </div>
                                 </div>
@@ -588,18 +684,36 @@ const ProfilePage: React.FC = () => {
                             <p className={`text-xs md:text-sm tracking-widest uppercase font-semibold ${theme.textMuted}`}>好きなブランド</p>
                         </div>
 
-                        <div className="w-full overflow-hidden flex whitespace-nowrap pointer-events-none mt-4">
-                            <div className="animate-marquee flex min-w-full shrink-0 items-center justify-around gap-6 pr-6">
+                        <div className="marquee-mask w-full overflow-hidden flex whitespace-nowrap mt-4 py-6">
+                            <div className="animate-marquee flex min-w-full shrink-0 items-center justify-around gap-10 pr-10">
                                 {carouselItems.map((item, idx) => (
-                                    <div key={`first-${idx}`} className={`w-48 h-48 md:w-64 md:h-64 ${theme.cardBg} border ${theme.border} rounded-lg flex-shrink-0 flex items-center justify-center overflow-hidden`}>
-                                        <img src={item} alt="Likes" className="w-full h-full object-cover" onError={(e) => (e.currentTarget.style.display = 'none')} />
+                                    <div
+                                        key={`first-${idx}`}
+                                        className="coverflow-card shrink-0 pointer-events-auto cursor-pointer"
+                                        style={{ '--tilt': idx % 2 === 0 ? '-12deg' : '12deg' } as React.CSSProperties}
+                                    >
+                                        <div
+                                            className={`${theme.glass} glass-shimmer anim-card-bob w-48 h-48 md:w-64 md:h-64 rounded-3xl flex items-center justify-center overflow-hidden`}
+                                            style={{ '--rot': idx % 2 === 0 ? '-2deg' : '2deg', animationDelay: `${(idx % 4) * 0.5}s` } as React.CSSProperties}
+                                        >
+                                            <img src={item} alt="Likes" className="w-full h-full object-cover" onError={(e) => (e.currentTarget.style.display = 'none')} />
+                                        </div>
                                     </div>
                                 ))}
                             </div>
-                            <div className="animate-marquee flex min-w-full shrink-0 items-center justify-around gap-6 pr-6" aria-hidden="true">
+                            <div className="animate-marquee flex min-w-full shrink-0 items-center justify-around gap-10 pr-10" aria-hidden="true">
                                 {carouselItems.map((item, idx) => (
-                                    <div key={`second-${idx}`} className={`w-48 h-48 md:w-64 md:h-64 ${theme.cardBg} border ${theme.border} rounded-lg flex-shrink-0 flex items-center justify-center overflow-hidden`}>
-                                        <img src={item} alt="Likes" className="w-full h-full object-cover" onError={(e) => (e.currentTarget.style.display = 'none')} />
+                                    <div
+                                        key={`second-${idx}`}
+                                        className="coverflow-card shrink-0 pointer-events-auto cursor-pointer"
+                                        style={{ '--tilt': idx % 2 === 0 ? '-12deg' : '12deg' } as React.CSSProperties}
+                                    >
+                                        <div
+                                            className={`${theme.glass} glass-shimmer anim-card-bob w-48 h-48 md:w-64 md:h-64 rounded-3xl flex items-center justify-center overflow-hidden`}
+                                            style={{ '--rot': idx % 2 === 0 ? '-2deg' : '2deg', animationDelay: `${(idx % 4) * 0.5}s` } as React.CSSProperties}
+                                        >
+                                            <img src={item} alt="Likes" className="w-full h-full object-cover" onError={(e) => (e.currentTarget.style.display = 'none')} />
+                                        </div>
                                     </div>
                                 ))}
                             </div>
@@ -611,9 +725,15 @@ const ProfilePage: React.FC = () => {
                     <div id="cafes-title" ref={cafesRef} className="w-full h-1 scroll-mt-24 md:scroll-mt-32"></div>
 
                     {cafeAnimState === 'playing' && (
-                        <div className={`fixed inset-0 z-40 ${theme.bgInvert} flex flex-col items-center justify-center anim-fade-out-screen pointer-events-none`}>
+                        <div className={`fixed inset-0 z-40 ${theme.glassOverlaySoft} backdrop-blur-2xl flex flex-col items-center justify-center anim-fade-out-screen pointer-events-none overflow-hidden`}>
+
+                            {/* 波紋がガラス越しに広がる */}
+                            <div className={`absolute w-32 h-32 rounded-full border ${isDarkMode ? 'border-white/30' : 'border-black/20'} anim-ripple`}></div>
+                            <div className={`absolute w-32 h-32 rounded-full border ${isDarkMode ? 'border-white/30' : 'border-black/20'} anim-ripple`} style={{ animationDelay: '0.8s' }}></div>
+                            <div className={`absolute w-32 h-32 rounded-full border ${isDarkMode ? 'border-white/30' : 'border-black/20'} anim-ripple`} style={{ animationDelay: '1.6s' }}></div>
+
                             <div className="relative w-64 h-80 flex flex-col items-center justify-center">
-                                <div className={`absolute top-[20px] left-[55%] origin-bottom-left anim-tilt-pot z-20 ${theme.textInvert}`}>
+                                <div className={`absolute top-[20px] left-[55%] origin-bottom-left anim-tilt-pot z-20 ${theme.textInvert} drop-shadow-[0_0_20px_rgba(255,255,255,0.25)]`}>
                                     <svg className="w-24 h-24 stroke-current fill-transparent transform -scale-x-100" strokeWidth="1" viewBox="0 0 24 24">
                                         <path d="M2 14h14a4 4 0 0 0 4-4V5H4v5a4 4 0 0 0 4 4z" />
                                         <path d="M20 7h2v3a2 2 0 0 1-2 2" />
@@ -621,13 +741,26 @@ const ProfilePage: React.FC = () => {
                                     </svg>
                                 </div>
                                 <div className="absolute top-[80px] left-[49%] w-3 bg-[#4A2C0F] anim-mega-pour rounded-full z-10"></div>
-                                <div className={`absolute top-[180px] left-[50%] transform -translate-x-1/2 z-20 ${theme.textInvert}`}>
+                                <div className={`absolute top-[180px] left-[50%] transform -translate-x-1/2 z-20 ${theme.textInvert} drop-shadow-[0_0_20px_rgba(255,255,255,0.25)]`}>
                                     <svg className="w-28 h-28 stroke-current fill-transparent" strokeWidth="1" viewBox="0 0 24 24">
                                         <path d="M18 8h2a3 3 0 0 1 0 6h-2" />
                                         <path d="M2 8h16v7a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V8z" />
                                         <line x1="1" y1="22" x2="19" y2="22" />
                                     </svg>
                                 </div>
+
+                                {/* 立ち上る湯気 */}
+                                {[
+                                    { left: '38%', wx: '-30px', delay: '1.6s', size: 'w-8 h-24' },
+                                    { left: '48%', wx: '15px', delay: '1.85s', size: 'w-10 h-28' },
+                                    { left: '58%', wx: '-10px', delay: '2.1s', size: 'w-8 h-24' },
+                                ].map((s, i) => (
+                                    <div
+                                        key={i}
+                                        className={`absolute top-[150px] ${s.size} rounded-full bg-white/30 blur-xl anim-steam-wisp`}
+                                        style={{ left: s.left, '--wx': s.wx, animationDelay: s.delay } as React.CSSProperties}
+                                    ></div>
+                                ))}
                             </div>
                             <div className="absolute bottom-[20%] w-[150px] h-[150px] rounded-full anim-steam-whiteout" style={{ '--flash-color': theme.flashBg } as React.CSSProperties}></div>
                         </div>
@@ -653,7 +786,7 @@ const ProfilePage: React.FC = () => {
 
                         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 w-full">
                             <div className="lg:col-span-3 space-y-12">
-                                <div className={`p-6 border ${theme.borderDotted} space-y-8`}>
+                                <div className={`${theme.glass} rounded-[1.5rem] p-6 space-y-8 transition-all duration-500 hover:-translate-y-1`}>
                                     <h3 className={`font-bold uppercase border-b ${theme.borderDotted} pb-4 text-sm`}>Search & Filter</h3>
                                     <div className="relative">
                                         <input type="text" placeholder="Search cafes..." className={`w-full bg-transparent border-b ${theme.borderDotted} py-2 text-xs outline-none focus:border-current transition-colors ${theme.text}`} />
@@ -662,7 +795,7 @@ const ProfilePage: React.FC = () => {
                                         <p className="text-[10px] font-bold opacity-40 uppercase">Area</p>
                                         <div className="flex flex-wrap gap-2">
                                             {['渋谷', '中野', '高円寺', '銀座', '新宿'].map(tag => (
-                                                <span key={tag} className={`px-3 py-1 border ${theme.borderDotted} text-[9px] rounded-full hover:${theme.bgInvert} hover:${theme.textInvert} transition-colors cursor-pointer`}>{tag}</span>
+                                                <span key={tag} className={`glass-shimmer px-3 py-1 ${theme.glassPill} text-[9px] rounded-full hover:${theme.bgInvert} hover:${theme.textInvert} transition-all cursor-pointer hover:-translate-y-0.5`}>{tag}</span>
                                             ))}
                                         </div>
                                     </div>
@@ -670,12 +803,12 @@ const ProfilePage: React.FC = () => {
                                         <p className="text-[10px] font-bold opacity-40 uppercase">Category</p>
                                         <div className="grid grid-cols-2 gap-2">
                                             {['古民家', '純喫茶', 'モダン', '読書', '静か', '猫'].map(tag => (
-                                                <span key={tag} className={`px-2 py-4 border ${theme.borderDotted} text-[9px] text-center hover:${theme.bgInvert} hover:${theme.textInvert} transition-colors cursor-pointer`}>#{tag}</span>
+                                                <span key={tag} className={`glass-shimmer px-2 py-4 ${theme.glassPill} rounded-xl text-[9px] text-center hover:${theme.bgInvert} hover:${theme.textInvert} transition-all cursor-pointer hover:-translate-y-0.5`}>#{tag}</span>
                                             ))}
                                         </div>
                                     </div>
                                 </div>
-                                <div className={`aspect-square ${theme.cardBg} border ${theme.borderDotted} flex items-center justify-center text-xs opacity-40 italic`}>MAP PREVIEW</div>
+                                <div className={`glass-floating aspect-square ${theme.glass} rounded-[1.5rem] flex items-center justify-center text-xs opacity-40 italic`}>MAP PREVIEW</div>
                             </div>
 
                             <div className="lg:col-span-9 space-y-16">
@@ -686,17 +819,17 @@ const ProfilePage: React.FC = () => {
                                 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                     {cafeData.map(cf => (
-                                        <div key={cf.no} className={`group cursor-pointer border-b ${theme.borderDotted} pb-8`}>
-                                            <div className={`aspect-[16/9] mb-6 overflow-hidden relative border ${theme.borderDotted} rounded-lg bg-zinc-500/10`}>
+                                        <div key={cf.no} className={`glass-shimmer group cursor-pointer ${theme.glass} rounded-[1.5rem] p-5 transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl`}>
+                                            <div className={`aspect-[16/9] mb-6 overflow-hidden relative border ${theme.borderDotted} rounded-2xl bg-zinc-500/10`}>
                                                 <span className={`absolute top-4 left-4 text-3xl font-black opacity-30 italic ${theme.textMuted} z-20 pointer-events-none`}>{cf.no}</span>
-                                                <iframe 
-                                                    src={cf.mapSrc} 
+                                                <iframe
+                                                    src={cf.mapSrc}
                                                     title={`${cf.n}の地図`}
-                                                    width="100%" 
-                                                    height="100%" 
-                                                    style={{ border: 0 }} 
-                                                    allowFullScreen={false} 
-                                                    loading="lazy" 
+                                                    width="100%"
+                                                    height="100%"
+                                                    style={{ border: 0 }}
+                                                    allowFullScreen={false}
+                                                    loading="lazy"
                                                     referrerPolicy="no-referrer-when-downgrade"
                                                     className="relative z-10"
                                                 ></iframe>
@@ -719,7 +852,7 @@ const ProfilePage: React.FC = () => {
                                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                                         {[1,2,3].map(i => (
                                             <div key={i} className="space-y-4 group cursor-pointer">
-                                                <div className={`aspect-video ${theme.cardBg} overflow-hidden rounded`}>
+                                                <div className={`glass-shimmer aspect-video ${theme.glass} rounded-2xl overflow-hidden transition-all duration-500 group-hover:-translate-y-1 group-hover:shadow-xl`}>
                                                     <div className="w-full h-full bg-zinc-500/20 group-hover:scale-110 transition-transform duration-700"></div>
                                                 </div>
                                                 <p className={`text-[10px] opacity-50 ${theme.textMuted}`}>2024.05.24 / Diary</p>
@@ -736,7 +869,7 @@ const ProfilePage: React.FC = () => {
                             <div className="flex gap-10 overflow-x-auto pb-10">
                                 {['茶亭 羽當', 'カフェ・ド・ランブル', 'ライオン', '琥珀', '珈琲 タイム'].map(n => (
                                     <div key={n} className="shrink-0 w-40 space-y-4 group cursor-pointer">
-                                        <div className={`aspect-[3/4] ${theme.cardBg} group-hover:ring-1 ${theme.border} transition-all rounded`}></div>
+                                        <div className={`glass-shimmer aspect-[3/4] ${theme.glass} rounded-2xl transition-all duration-500 group-hover:-translate-y-2 group-hover:shadow-xl`}></div>
                                         <p className="text-[10px] font-bold text-center uppercase tracking-widest">{n}</p>
                                     </div>
                                 ))}
