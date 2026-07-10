@@ -1,1 +1,224 @@
 @import "tailwindcss";
+
+/* ============================================================
+   HOLOGRAPHIC / CYBERPUNK THEME
+   deep-space base + neon cyan / blue / purple glow
+   ============================================================ */
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    background:
+        radial-gradient(1200px 800px at 85% -10%, rgba(128, 0, 255, 0.20), transparent 60%),
+        radial-gradient(1000px 700px at -10% 30%, rgba(0, 140, 255, 0.16), transparent 55%),
+        radial-gradient(900px 900px at 50% 115%, rgba(0, 255, 255, 0.12), transparent 60%),
+        #030014;
+    color: #e2e8f0;
+}
+
+::selection {
+    background: rgba(255, 255, 255, 0.3);
+    color: #fff;
+}
+
+::-webkit-scrollbar { display: none; }
+* { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* ------------------------------------------------------------
+   ホログラフィック・グラスカード（白黒ホログラム）
+   ------------------------------------------------------------ */
+.holo-card {
+    position: relative;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow:
+        0 0 20px rgba(255, 255, 255, 0.22),
+        0 0 40px rgba(255, 255, 255, 0.08);
+    transition: box-shadow 0.5s ease, border-color 0.5s ease, background 0.5s ease;
+}
+
+/* 上面のうっすらとした反射 */
+.holo-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.02) 30%, transparent 48%);
+    pointer-events: none;
+}
+
+.holo-card-hover:hover {
+    background: rgba(255, 255, 255, 0.09);
+    border-color: rgba(255, 255, 255, 0.5);
+    box-shadow:
+        0 0 28px rgba(255, 255, 255, 0.35),
+        0 0 64px rgba(255, 255, 255, 0.14);
+}
+
+.holo-pill {
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    box-shadow:
+        0 0 14px rgba(255, 255, 255, 0.2),
+        0 0 28px rgba(255, 255, 255, 0.08);
+}
+
+/* ホワイト発光テキスト（白黒ホログラム） */
+.neon-text {
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.85), 0 0 32px rgba(255, 255, 255, 0.35);
+}
+.neon-purple-text {
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.85), 0 0 32px rgba(255, 255, 255, 0.35);
+}
+.holo-gradient-text {
+    background: linear-gradient(100deg, #ffffff 0%, #d4d4d8 45%, #71717a 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+/* ------------------------------------------------------------
+   背景演出：スキャンライン / 光のストリーク / グリッドフロア
+   ------------------------------------------------------------ */
+.scanlines {
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.035) 0 1px, transparent 1px 3px);
+    mix-blend-mode: overlay;
+    pointer-events: none;
+}
+
+@keyframes streak {
+    0% { transform: translate3d(-40vw, -40vh, 0) rotate(35deg); opacity: 0; }
+    12% { opacity: 0.9; }
+    100% { transform: translate3d(130vw, 130vh, 0) rotate(35deg); opacity: 0; }
+}
+.light-streak {
+    position: absolute;
+    width: 38vw;
+    height: 2px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, transparent, rgba(103, 232, 249, 0.9), transparent);
+    filter: blur(1px);
+    box-shadow: 0 0 14px rgba(103, 232, 249, 0.8);
+    animation: streak 9s linear infinite;
+}
+.light-streak.purple {
+    background: linear-gradient(90deg, transparent, rgba(192, 132, 252, 0.85), transparent);
+    box-shadow: 0 0 14px rgba(192, 132, 252, 0.75);
+}
+
+@keyframes grid-scroll {
+    from { background-position: 0 0; }
+    to { background-position: 0 48px; }
+}
+.holo-grid {
+    position: absolute;
+    left: -20%;
+    right: -20%;
+    bottom: -14vh;
+    height: 48vh;
+    background-image:
+        linear-gradient(rgba(34, 211, 238, 0.16) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(34, 211, 238, 0.16) 1px, transparent 1px);
+    background-size: 48px 48px;
+    transform: perspective(620px) rotateX(62deg);
+    -webkit-mask-image: linear-gradient(180deg, transparent, #000 35%, #000 70%, transparent);
+    mask-image: linear-gradient(180deg, transparent, #000 35%, #000 70%, transparent);
+    animation: grid-scroll 12s linear infinite;
+    pointer-events: none;
+}
+
+/* ------------------------------------------------------------
+   ページ内アニメーション（既存演出のホロ移植）
+   ------------------------------------------------------------ */
+@keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
+.animate-marquee { animation: marquee 25s linear infinite; }
+
+@keyframes drop-giant-box { 0% { transform: scale(3) translateY(-100vh) rotate(-35deg); opacity: 0; } 50% { transform: scale(1) translateY(0) rotate(15deg); opacity: 1; } 65% { transform: scale(1.1) translateY(-20px) rotate(-5deg); } 80% { transform: scale(0.98) translateY(0) rotate(0deg); } 100% { transform: scale(1) translateY(0) rotate(0deg); opacity: 1; } }
+.anim-drop-box { opacity: 0; animation: drop-giant-box 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.15) 0.2s both; }
+
+@keyframes burst-notes { 0% { transform: translate(0, 0) scale(0.3); opacity: 0; } 20% { opacity: 1; } 100% { transform: translate(var(--mx), var(--my)) scale(1.8) rotate(var(--mr)); opacity: 0; } }
+.anim-burst-note { opacity: 0; animation: burst-notes 1.1s ease-out 1.5s both; }
+
+@keyframes shatter-tl { 0% { transform: translate(0,0) rotate(0); opacity:1; } 100% { transform: translate(-120vw, -120vh) rotate(-35deg); opacity:0; } }
+@keyframes shatter-tr { 0% { transform: translate(0,0) rotate(0); opacity:1; } 100% { transform: translate(120vw, -120vh) rotate(35deg); opacity:0; } }
+@keyframes shatter-bl { 0% { transform: translate(0,0) rotate(0); opacity:1; } 100% { transform: translate(-120vw, 120vh) rotate(25deg); opacity:0; } }
+@keyframes shatter-br { 0% { transform: translate(0,0) rotate(0); opacity:1; } 100% { transform: translate(120vw, 120vh) rotate(-25deg); opacity:0; } }
+.anim-shatter-tl { clip-path: polygon(0 0, 100% 0, 50% 50%, 0 100%); animation: shatter-tl 0.8s cubic-bezier(0.25, 1, 0.5, 1) 2.8s both; }
+.anim-shatter-tr { clip-path: polygon(100% 0, 100% 100%, 50% 50%); animation: shatter-tr 0.8s cubic-bezier(0.25, 1, 0.5, 1) 2.8s both; }
+.anim-shatter-bl { clip-path: polygon(0 100%, 50% 50%, 100% 100%); animation: shatter-bl 0.8s cubic-bezier(0.25, 1, 0.5, 1) 2.8s both; }
+.anim-shatter-br { clip-path: polygon(0 0, 50% 50%, 0 100%); animation: shatter-br 0.8s cubic-bezier(0.25, 1, 0.5, 1) 2.8s both; }
+
+@keyframes tilt-pot { 0% { transform: rotate(0deg); opacity: 0; } 5% { opacity: 1; } 15% { transform: rotate(-35deg); opacity: 1; } 80% { transform: rotate(-35deg); opacity: 1; } 100% { transform: rotate(0deg); opacity: 0; } }
+.anim-tilt-pot { opacity: 0; animation: tilt-pot 1.8s ease-in-out 0.2s both; }
+
+@keyframes mega-pour-line { 0% { height: 0px; transform: translateY(0); opacity: 0; } 15% { height: 110px; transform: translateY(0); opacity: 1; } 75% { height: 110px; transform: translateY(0); opacity: 1; } 100% { height: 0px; transform: translateY(110px); opacity: 0; } }
+.anim-mega-pour { opacity: 0; animation: mega-pour-line 1.4s ease-in 0.45s both; }
+
+@keyframes steam-whiteout { 0% { transform: scale(0.1); opacity: 0; filter: blur(15px); background: #ffffff; } 30% { transform: scale(2.2); opacity: 0.6; filter: blur(35px); background: #ffffff; } 60% { transform: scale(5); opacity: 1; filter: blur(5px); background: var(--flash-color); } 100% { transform: scale(7); opacity: 1; filter: blur(0px); background: var(--flash-color); } }
+.anim-steam-whiteout { opacity: 0; animation: steam-whiteout 2.2s ease-out 1.5s both; }
+
+@keyframes fade-out-overlay { 0% { opacity: 1; visibility: visible; } 100% { opacity: 0; visibility: hidden; } }
+.anim-fade-out-screen { animation: fade-out-overlay 0.8s ease-in-out 3.7s both; }
+
+/* ホバー時のシマー（光の反射） */
+@keyframes shimmer-sweep { 0% { transform: translateX(-150%) skewX(-20deg); } 100% { transform: translateX(250%) skewX(-20deg); } }
+.glass-shimmer { position: relative; overflow: hidden; }
+.glass-shimmer::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 40%; height: 100%;
+    background: linear-gradient(115deg, transparent 20%, rgba(255, 255, 255, 0.35) 50%, transparent 80%);
+    transform: translateX(-150%) skewX(-20deg);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    z-index: 1;
+}
+.glass-shimmer:hover::before { opacity: 1; animation: shimmer-sweep 1.1s ease forwards; }
+
+/* ふわっと浮遊するカード */
+@keyframes glass-float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-6px); } }
+.glass-floating { animation: glass-float 6s ease-in-out infinite; }
+
+/* 音楽演出パーティクル拡散 */
+@keyframes burst-shard { 0% { transform: translate(0,0) scale(0.2) rotate(0deg); opacity: 0; } 15% { opacity: 1; } 100% { transform: translate(var(--mx), var(--my)) scale(1) rotate(var(--mr)); opacity: 0; } }
+.anim-burst-shard { opacity: 0; animation: burst-shard 1.6s cubic-bezier(0.2,0.8,0.2,1) 1.4s both; }
+
+@keyframes ring-expand { 0% { transform: scale(0.3); opacity: 0.9; border-width: 6px; } 100% { transform: scale(2.6); opacity: 0; border-width: 1px; } }
+.anim-ring-expand { animation: ring-expand 1.8s ease-out 1.3s both; }
+
+/* カフェ演出の波紋 */
+@keyframes ripple-out { 0% { transform: scale(0); opacity: 0.6; } 100% { transform: scale(1); opacity: 0; } }
+.anim-ripple { animation: ripple-out 2.4s ease-out infinite; }
+
+@keyframes steam-wisp { 0% { transform: translateY(0) translateX(0) scale(0.6); opacity: 0; } 30% { opacity: 0.7; } 100% { transform: translateY(-180px) translateX(var(--wx, 20px)) scale(1.4); opacity: 0; } }
+.anim-steam-wisp { animation: steam-wisp 2.6s ease-in-out infinite; }
+
+/* マーキーのフェードマスク */
+.marquee-mask {
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+    mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+}
+
+/* LIKES: コーンフロー風カード演出 */
+.coverflow-card {
+    transform: perspective(1000px) rotateY(var(--tilt, 0deg));
+    transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.5s ease;
+    will-change: transform;
+}
+.coverflow-card:hover {
+    transform: perspective(1000px) rotateY(0deg) translateY(-14px) scale(1.1);
+    z-index: 30;
+    box-shadow: 0 0 40px rgba(255, 255, 255, 0.35), 0 0 80px rgba(255, 255, 255, 0.15);
+}
+@keyframes card-bob { 0%, 100% { transform: translateY(0) rotate(var(--rot, 0deg)); } 50% { transform: translateY(-14px) rotate(var(--rot, 0deg)); } }
+.anim-card-bob { animation: card-bob 6s ease-in-out infinite; }

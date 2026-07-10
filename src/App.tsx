@@ -1,13 +1,24 @@
-// 1. 新しく作った ProfilePage.tsx を読み込みます（インポート）
+import { useState } from 'react';
+import MuseumExperience from './museum/MuseumExperience';
 import ProfilePage from './ProfilePage';
 
-// 2. App という名前のメイン部品（コンポーネント）を作ります
+// 3D螺旋ミュージアム（メイン体験）と従来のプロフィールページを切り替えられる
 function App() {
+  const [classicView, setClassicView] = useState(false);
+
+  const toggleView = () => {
+    window.scrollTo(0, 0);
+    setClassicView(v => !v);
+  };
+
   return (
-    // 3. 読み込んだ ProfilePage を画面に表示します
-    <ProfilePage />
+    <>
+      {classicView ? <ProfilePage /> : <MuseumExperience />}
+      <button className="view-toggle" onClick={toggleView}>
+        {classicView ? '3D MUSEUM →' : 'CLASSIC VIEW →'}
+      </button>
+    </>
   );
 }
 
-// 4. この App を外から使えるように書き出します（エクスポート）
 export default App;
